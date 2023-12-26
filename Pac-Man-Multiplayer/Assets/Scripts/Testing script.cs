@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Testingscript : MonoBehaviour
 {
+    public bool isInvincible = false;
+
     public float speed = 5f;
     private Rigidbody2D rb;
     private Vector2 player_input;
