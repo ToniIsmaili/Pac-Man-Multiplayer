@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 [CreateAssetMenu(menuName = "PowerUp/Speed decrease")]
 public class SlowDown : PowerUp
@@ -9,6 +10,18 @@ public class SlowDown : PowerUp
     public override void onPickUp(GameObject gameObject)
     {
         MonoBehaviour.Destroy(gameObject);
+    }
+
+    public override void StartNeutralize(GameObject gameObject, float duration)
+    {
+        gameObject.GetComponent<Testingscript>().speed += speed_decrease;
+    
+        base.StartNeutralize(gameObject, effect_duration);
+    }
+
+    public override void NeutralizeEffect(GameObject gameObject)
+    {
+        gameObject.GetComponent<Testingscript>().speed -= speed_decrease;
     }
 
     public override void Apply(GameObject target)

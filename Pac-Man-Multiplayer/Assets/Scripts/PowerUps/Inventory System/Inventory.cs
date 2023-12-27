@@ -17,6 +17,7 @@ public class Inventory : MonoBehaviour
             if (powerUp.tile_based)
             {
                 SpawnTile(powerUp.tile);
+                powerUp.StartNeutralize(gameObject, 0f);
                 powerUp = null; 
             }
             else

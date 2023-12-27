@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public abstract class PowerUp : ScriptableObject
 {
@@ -11,6 +12,12 @@ public abstract class PowerUp : ScriptableObject
     public abstract void Apply(GameObject target);
 
     public abstract void onPickUp(GameObject gameObject);
+
+    public virtual void StartNeutralize(GameObject gameObject, float duration)
+    {
+        MonoBehaviour = gameObject.GetComponent<MonoBehaviour>();
+        MonoBehaviour.StartCoroutine(WaitNeutralize(gameObject, duration));
+    }
 
     public void StartEffectDuration(GameObject target, float duration)
     {
@@ -26,6 +33,17 @@ public abstract class PowerUp : ScriptableObject
         // Reset back to its original value
         ResetEffect(target);
     }
+
+    private IEnumerator WaitNeutralize(GameObject target, float duration)
+    {
+        // Wait for the specified duration
+        yield return new WaitForSeconds(duration);
+
+        // Reset back to its original value
+        NeutralizeEffect(target);
+    }
+
+    public virtual void NeutralizeEffect(GameObject gameObject) { }
 
     public abstract void ResetEffect(GameObject target);
 

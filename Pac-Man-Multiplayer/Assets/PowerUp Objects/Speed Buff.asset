@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2eef692a756e004fbd8e7bd259838e1, type: 3}
   m_Name: Speed Buff
   m_EditorClassIdentifier: 
-  isTiled: 0
+  tile: {fileID: 0}
+  tile_based: 0
   speed_increase: 100
   speed_duration: 5
