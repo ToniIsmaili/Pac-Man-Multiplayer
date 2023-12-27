@@ -5,7 +5,7 @@ using UnityEngine;
 public class Testingscript : MonoBehaviour
 {
     public bool isInvincible = false;
-
+    public int score = 0;
     public float speed = 5f;
     private Rigidbody2D rb;
     private Vector2 player_input;
