@@ -1,11 +1,15 @@
 using UnityEngine;
 
-
-[CreateAssetMenu(menuName = "PowerUp/Speed Increase")]
-public class SpeedUp : PowerUp
+[CreateAssetMenu(menuName = "PowerUp/Speed decrease")]
+public class SlowDown : PowerUp
 {
-    public float speed_increase = 100f;
-    public float speed_duration = 5f;
+    public float effect_duration = 10f;
+    public float speed_decrease = 50f;
+
+    public override void onPickUp(GameObject gameObject)
+    {
+        MonoBehaviour.Destroy(gameObject);
+    }
 
     public override void Apply(GameObject target)
     {
@@ -14,10 +18,10 @@ public class SpeedUp : PowerUp
         if (player_controller != null)
         {
             // Increase speed
-            player_controller.speed += speed_increase;
+            player_controller.speed -= speed_decrease;
 
             // Start a coroutine to reset speed after duration
-            StartEffectDuration(target, speed_duration);
+            StartEffectDuration(target, effect_duration);
         }
         else
         {
@@ -27,7 +31,6 @@ public class SpeedUp : PowerUp
 
     public override void ResetEffect(GameObject target)
     {
-        target.GetComponent<Testingscript>().speed -= speed_increase;
+        target.GetComponent<Testingscript>().speed += speed_decrease;
     }
-
 }

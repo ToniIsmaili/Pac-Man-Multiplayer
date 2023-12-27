@@ -5,6 +5,11 @@ public class Invincible : PowerUp
 {
     public float invincibility_duration = 5f;
 
+    public override void onPickUp(GameObject gameObject)
+    {
+        MonoBehaviour.Destroy(gameObject);
+    }
+
     public override void Apply(GameObject target)
     {
         Testingscript player_controller = target.GetComponent<Testingscript>();

@@ -3,12 +3,16 @@ using UnityEngine;
 
 public abstract class PowerUp : ScriptableObject
 {
-
     private MonoBehaviour MonoBehaviour = null;
+
+    public GameObject tile = null;
+    public bool tile_based = false;
 
     public abstract void Apply(GameObject target);
 
-    public void StartEffectDuration(GameObject target,float duration)
+    public abstract void onPickUp(GameObject gameObject);
+
+    public void StartEffectDuration(GameObject target, float duration)
     {
         MonoBehaviour = target.GetComponent<MonoBehaviour>();
         MonoBehaviour.StartCoroutine(Wait(target, duration));

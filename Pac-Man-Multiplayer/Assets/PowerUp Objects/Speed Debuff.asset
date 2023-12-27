@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2eef692a756e004fbd8e7bd259838e1, type: 3}
-  m_Name: Speed Buff
+  m_Script: {fileID: 11500000, guid: e858aa80cf0e2ec40b6a01f493a0b6ec, type: 3}
+  m_Name: Speed Debuff
   m_EditorClassIdentifier: 
-  isTiled: 0
-  speed_increase: 100
-  speed_duration: 5
+  tile: {fileID: 3170354015933118731, guid: b24b24139869c8f4180d9fe8535fb94a, type: 3}
+  tile_based: 1
+  effect_duration: 10
+  speed_decrease: 50

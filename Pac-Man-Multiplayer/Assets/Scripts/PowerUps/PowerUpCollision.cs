@@ -9,9 +9,8 @@ public class PowerUpCollision : MonoBehaviour
         if (collider.name == "Player" && collider.GetComponent<Inventory>().powerUp == null)
         {
             collider.GetComponent<Inventory>().powerUp = powerUp;
-            Destroy(gameObject);
+            powerUp.onPickUp(gameObject);
+            // Destroy(gameObject);
         }
-
-        // powerUp.Apply(collider.gameObject);
     }
 }
