@@ -13,7 +13,7 @@ public class SpeedUp : PowerUp
 
     public override void Apply(GameObject target)
     {
-        Testingscript player_controller = target.GetComponent<Testingscript>();
+        MovementController player_controller = target.GetComponent<MovementController>();
 
         if (player_controller != null)
         {
@@ -31,7 +31,7 @@ public class SpeedUp : PowerUp
 
     public override void ResetEffect(GameObject target)
     {
-        target.GetComponent<Testingscript>().speed -= speed_increase;
+        target.GetComponent<MovementController>().speed -= speed_increase;
     }
 
 }

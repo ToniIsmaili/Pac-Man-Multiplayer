@@ -19,7 +19,7 @@ public class PacDot : MonoBehaviour
         if (collision.tag == "PacMan")
         {
             Destroy(gameObject);
-            collision.GetComponent<Testingscript>().score++;
+            collision.GetComponent<PlayerController>().score++;
             gameManager.dots_remaining--;
         }
 

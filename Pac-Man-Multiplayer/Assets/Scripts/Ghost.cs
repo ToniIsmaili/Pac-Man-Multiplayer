@@ -8,7 +8,7 @@ public class Ghost : MonoBehaviour
     {
         if (collision.gameObject.name == "Player")
         {
-            if (collision.gameObject.GetComponent<Testingscript>().isInvincible)
+            if (collision.gameObject.GetComponent<PlayerController>().isInvincible)
             {
                 Destroy(gameObject);
             }

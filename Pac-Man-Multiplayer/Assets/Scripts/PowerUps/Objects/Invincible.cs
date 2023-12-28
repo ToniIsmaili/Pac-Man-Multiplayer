@@ -12,7 +12,7 @@ public class Invincible : PowerUp
 
     public override void Apply(GameObject target)
     {
-        Testingscript player_controller = target.GetComponent<Testingscript>();
+        PlayerController player_controller = target.GetComponent<PlayerController>();
 
         if (player_controller != null )
         {
@@ -25,6 +25,6 @@ public class Invincible : PowerUp
 
     public override void ResetEffect(GameObject target)
     {
-        target.GetComponent<Testingscript>().isInvincible = false;
+        target.GetComponent<PlayerController>().isInvincible = false;
     }
 }

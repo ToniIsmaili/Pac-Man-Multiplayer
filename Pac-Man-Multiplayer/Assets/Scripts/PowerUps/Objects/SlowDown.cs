@@ -14,19 +14,19 @@ public class SlowDown : PowerUp
 
     public override void StartNeutralize(GameObject gameObject, float duration)
     {
-        gameObject.GetComponent<Testingscript>().speed += speed_decrease;
+        gameObject.GetComponent<MovementController>().speed += speed_decrease;
     
         base.StartNeutralize(gameObject, effect_duration);
     }
 
     public override void NeutralizeEffect(GameObject gameObject)
     {
-        gameObject.GetComponent<Testingscript>().speed -= speed_decrease;
+        gameObject.GetComponent<MovementController>().speed -= speed_decrease;
     }
 
     public override void Apply(GameObject target)
     {
-        Testingscript player_controller = target.GetComponent<Testingscript>();
+        MovementController player_controller = target.GetComponent<MovementController>();
 
         if (player_controller != null)
         {
@@ -44,6 +44,6 @@ public class SlowDown : PowerUp
 
     public override void ResetEffect(GameObject target)
     {
-        target.GetComponent<Testingscript>().speed += speed_decrease;
+        target.GetComponent<MovementController>().speed += speed_decrease;
     }
 }

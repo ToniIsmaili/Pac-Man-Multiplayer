@@ -6,11 +6,10 @@ public class PowerUpCollision : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.name == "Player" && collider.GetComponent<Inventory>().powerUp == null)
+        if (collider.name == "Player" && collider.GetComponent<PlayerController>().powerUp == null)
         {
-            collider.GetComponent<Inventory>().powerUp = powerUp;
+            collider.GetComponent<PlayerController>().powerUp = powerUp;
             powerUp.onPickUp(gameObject);
-            // Destroy(gameObject);
         }
     }
 }
