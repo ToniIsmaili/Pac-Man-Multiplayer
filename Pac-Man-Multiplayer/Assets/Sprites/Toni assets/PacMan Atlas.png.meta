@@ -501,7 +501,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -509,6 +509,35 @@ TextureImporter:
       bones: []
       spriteID: 4c61ac7a90775a3458f651aa372eb62d
       internalID: -88341409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pac_dot
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 80
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -8, y: 8}
+        - {x: -8, y: -8}
+        - {x: 8, y: -8}
+        - {x: 8, y: 8}
+      - - {x: -2, y: -2}
+        - {x: -2, y: 2}
+        - {x: 2, y: 2}
+        - {x: 2, y: -2}
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1bc2e151d10e5c41af1431a40571baa
+      internalID: 1903909066
       vertices: []
       indices: 
       edges: []
@@ -533,6 +562,7 @@ TextureImporter:
       left_empty: -626078892
       left_stub: 1787685001
       left_wall: 1805540991
+      pac_dot: 1903909066
       pacman: -88341409
       right_empty: -1705575518
       right_stub: -1919549318

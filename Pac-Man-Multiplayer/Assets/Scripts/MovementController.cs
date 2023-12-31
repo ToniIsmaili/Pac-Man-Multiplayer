@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MovementController : MonoBehaviour
@@ -27,17 +25,13 @@ public class MovementController : MonoBehaviour
     // Checks if the way that the player wants to go is free, and when it is it starts walking there
     private void MovePlayer()
     {
-        if (player_input == Vector2.left &&
-            !Physics2D.BoxCast(transform.position, GetComponent<BoxCollider2D>().size, 0, Vector2.left, 0.1f))
+        if (player_input == Vector2.left && CanMove(Vector2.left, "Wall"))
             direction = player_input;
-        if (player_input == Vector2.right &&
-            !Physics2D.BoxCast(transform.position, GetComponent<BoxCollider2D>().size, 0, Vector2.right, 0.1f))
+        if (player_input == Vector2.right && CanMove(Vector2.right, "Wall"))
             direction = player_input;
-        if (player_input == Vector2.up &&
-            !Physics2D.BoxCast(transform.position, GetComponent<BoxCollider2D>().size, 0, Vector2.up, 0.1f))
+        if (player_input == Vector2.up && CanMove(Vector2.up, "Wall"))
             direction = player_input;
-        if (player_input == Vector2.down &&
-            !Physics2D.BoxCast(transform.position, GetComponent<BoxCollider2D>().size, 0, Vector2.down, 0.1f))
+        if (player_input == Vector2.down && CanMove(Vector2.down, "Wall"))
             direction = player_input;
     }
 
@@ -56,4 +50,17 @@ public class MovementController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
             player_input = Vector2.down;
     }
+
+    private bool CanMove(Vector2 direction, string tag)
+    {
+        RaycastHit2D hit = Physics2D.BoxCast(transform.position, GetComponent<BoxCollider2D>().size, 0, direction, 0.1f);
+
+        // Checks if raycast has collided with anything
+        if (hit.collider == null)
+            return true;
+
+        // Returns true if it hasnt collided with "tag"
+        return !hit.collider.CompareTag(tag);
+    }
+
 }
