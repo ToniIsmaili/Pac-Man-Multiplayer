@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     private static MazeGenerator mazeGenerator;
     private List<Vector3> freeTiles = new List<Vector3>();
+    public static List<Vector3> notWallTiles = new List<Vector3>();
     private bool force_dot = false;
     public int power_up_chance = 5;
     public int dots_remaining;
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
         mazeGenerator = GetComponent<MazeGenerator>();
         if (mazeGenerator != null) mazeGenerator.GenerateMaze();
         GetFreeTiles();
+        StoreNotWalls();
         SpawnPlayer(false);
         PlaceDot();
         dots_remaining = GameObject.FindGameObjectsWithTag("PacDot").Length;
@@ -40,6 +42,7 @@ public class GameManager : MonoBehaviour
         tilemap.ClearAllTiles();
         if (mazeGenerator != null) mazeGenerator.GenerateMaze();
         GetFreeTiles();
+        StoreNotWalls();
         SpawnPlayer(true);
         PlaceDot();
         dots_remaining = GameObject.FindGameObjectsWithTag("PacDot").Length;
@@ -148,6 +151,14 @@ public class GameManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void StoreNotWalls()
+    {
+        foreach(Vector3 v in freeTiles)
+        {
+            notWallTiles.Add(v);
+        }
     }
 
     private bool isGhostSpawn(int i, int j)

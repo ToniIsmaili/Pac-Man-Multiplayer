@@ -7,6 +7,7 @@ public abstract class PowerUp : ScriptableObject
 
     public GameObject tile = null;
     public bool tile_based = false;
+    public bool teleport_based = false;
 
     public abstract void Apply(GameObject target);
 
