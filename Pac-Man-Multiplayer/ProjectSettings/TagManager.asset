@@ -7,6 +7,9 @@ TagManager:
   - PacMan
   - PacDot
   - Wall
+  - PowerUp
+  - Barrier
+  - Tunnel
   layers:
   - Default
   - TransparentFX

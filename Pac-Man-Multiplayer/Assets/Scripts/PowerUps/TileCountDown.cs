@@ -9,7 +9,7 @@ public class TileCountDown : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.name == "Player")
+        if (collider.tag == "PacMan")
         {
             powerUp.Apply(collider.gameObject);
         }

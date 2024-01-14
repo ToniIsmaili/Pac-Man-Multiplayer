@@ -6,13 +6,12 @@ using UnityEngine.Tilemaps;
 public class MazeGenerator : MonoBehaviour
 {
     private const int UP = 1, RIGHT = 2, DOWN = 4, LEFT = 8;
+    private bool hasWallMerged = false;
     public int numRows = 10, numCols = 5;
-    // Removed the floor sprite and wall sprite variables and added refrences to the tilemap and the tile rule (tilebase)
     public Tilemap tilemap;
-    public TileBase tilebase;
-    private float[] probStopping = { 0f, 0f, 0.3f, 0.7f, 1f };
-    private float[] probBranchStopping = { 0f, 0.5f, 1f };
-    private float probBranching = 0.7f, probWallMerging = 0.7f;
+    public TileBase tileBase;
+    private float[] probStopping = { 0f, 0f, 0.3f, 0.7f, 1f }, probBranchStopping = { 0f, 0.5f, 1f };
+    private float probBranching = 0.7f, probWallMerging = 0.7f, probTunnel = 0.5f;
     public void GenerateMaze()
     {
         int[,] cells = new int[numRows, numCols];
@@ -20,7 +19,7 @@ public class MazeGenerator : MonoBehaviour
         setGhostSpawn(cells);
         generateMaze(cells);
         int[,] map = cellToMap(cells);
-        renderMap(map, tilemap, tilebase);
+        renderMap(map);
     }
 
     private static void initializeCells(int[,] cells)
@@ -175,195 +174,69 @@ public class MazeGenerator : MonoBehaviour
             {
                 int bottomLefty = (i * 3) + 1, bottomLeftx = j * 3;
                 //Bottom and right edge are paths by default
-                map[bottomLefty, bottomLeftx] = -1;
-                map[bottomLefty, bottomLeftx + 1] = -1;
-                map[bottomLefty, bottomLeftx + 2] = -1;
-                map[bottomLefty + 1, bottomLeftx + 2] = -1;
-                map[bottomLefty + 2, bottomLeftx + 2] = -1;
+                map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = -1;
+                map[bottomLefty, bottomLeftx + 2] = map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = -1;
+                //Top left 2x2 are always walls
+                map[bottomLefty + 1, bottomLeftx] = map[bottomLefty + 1, bottomLeftx + 1] = 0;
+                map[bottomLefty + 2, bottomLeftx] = map[bottomLefty + 2, bottomLeftx + 1] = 0;
                 switch (cells[i, j])
                 {
-                    case 1:
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT;
-                        map[bottomLefty + 2, bottomLeftx] = UP + DOWN + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = UP + DOWN + LEFT;
+                    case 0:
+                        if (!hasWallMerged || UnityEngine.Random.Range(0f, 1f) <= probWallMerging)
+                        {//If hasn't merged before or prob proced, merge
+                            if (j == numCols - 1)
+                            {//Check if right most column
+                                map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = 0;
+                                if (i == 0) //Check if bottom corner
+                                    map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = map[bottomLefty, bottomLeftx + 2] = 0;
+                                else if (i == numRows - 1) //If top corner, set top row to 1 so it's detected when doing top path
+                                    map[bottomLefty + 2, bottomLeftx] = map[bottomLefty + 2, bottomLeftx + 1] = map[bottomLefty + 2, bottomLeftx + 2] = 1;
+                            }
+                            else if (i == 0)//Check if bottom row, not corner
+                                map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx] = 0;
+                            else if (i == numRows - 1)//Check if top row, not corner
+                                map[bottomLefty + 2, bottomLeftx] = map[bottomLefty + 2, bottomLeftx + 1] = 1;
+                        }
                         break;
                     case 2:
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT + RIGHT;
-                        map[bottomLefty + 1, bottomLeftx + 2] = UP + LEFT + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 2] = DOWN + RIGHT + LEFT;
+                        map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = 0;
                         break;
                     case 3:
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT + RIGHT;
-                        map[bottomLefty + 1, bottomLeftx + 2] = UP + LEFT + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx] = UP + DOWN + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = UP + DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 2] = DOWN + RIGHT + LEFT;
+                        map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = 0;
                         break;
                     case 4:
-                        map[bottomLefty, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty, bottomLeftx + 1] = UP + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT + DOWN;
-                        map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = DOWN + LEFT;
+                        map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = 0;
                         break;
                     case 5:
-                        map[bottomLefty, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty, bottomLeftx + 1] = UP + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT + DOWN;
-                        map[bottomLefty + 2, bottomLeftx] = UP + DOWN + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = UP + DOWN + LEFT;
+                        map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = 0;
                         break;
                     case 6:
-                        map[bottomLefty, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty, bottomLeftx + 1] = UP + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT + DOWN + RIGHT;
-                        map[bottomLefty + 1, bottomLeftx + 2] = UP + LEFT + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 2] = DOWN + RIGHT + LEFT;
+                        map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = 0;
+                        map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = 0;
                         break;
                     case 7:
-                        map[bottomLefty, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty, bottomLeftx + 1] = UP + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT + DOWN + RIGHT;
-                        map[bottomLefty + 1, bottomLeftx + 2] = UP + LEFT + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx] = UP + DOWN + RIGHT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = UP + DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 2] = DOWN + RIGHT + LEFT;
-                        break;
-                    case 8:
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT;
-                        map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = DOWN + LEFT;
-                        break;
-                    case 9:
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT;
-                        map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT + LEFT + UP;
-                        map[bottomLefty + 2, bottomLeftx + 1] = DOWN + LEFT + UP;
+                        map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = 0;
+                        map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = 0;
                         break;
                     case 10:
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 2] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 2] = DOWN + RIGHT + LEFT;
+                        map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = 0;
                         break;
                     case 11:
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 2] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx] = UP + DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = UP + DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 2] = DOWN + RIGHT + LEFT;
+                        map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = 0;
                         break;
                     case 12:
-                        map[bottomLefty, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty, bottomLeftx + 1] = UP + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT + DOWN;
-                        map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = DOWN + LEFT;
+                        map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = 0;
                         break;
                     case 13:
-                        map[bottomLefty, bottomLeftx] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty, bottomLeftx + 1] = UP + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + DOWN + LEFT;
-                        map[bottomLefty + 2, bottomLeftx] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = UP + DOWN + LEFT;
+                        map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = 0;
                         break;
                     case 14:
-                        map[bottomLefty, bottomLeftx] = UP + RIGHT + DOWN;
-                        map[bottomLefty, bottomLeftx + 1] = UP + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 2] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx] = RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 2] = RIGHT + DOWN + LEFT;
+                        map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = 0;
+                        map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = 0;
                         break;
                     case 15:
-                        map[bottomLefty, bottomLeftx] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty, bottomLeftx + 1] = UP + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 1] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 1, bottomLeftx + 2] = UP + RIGHT + LEFT;
-                        map[bottomLefty + 2, bottomLeftx] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 1] = UP + RIGHT + DOWN + LEFT;
-                        map[bottomLefty + 2, bottomLeftx + 2] = RIGHT + DOWN + LEFT;
-                        break;
-                    default: // case 0
-                        if ((i == 0 || i == (numRows - 1)) && UnityEngine.Random.Range(0f, 1f) <= probWallMerging)
-                        {
-                            //If top or bottom row, try merging walls
-                            if (j == numCols - 1)
-                            {
-                                //Check if corner
-                                if (i == 0)
-                                {
-                                    //Check if top or bottom corner
-                                    map[bottomLefty, bottomLeftx] = map[bottomLefty + 1, bottomLeftx] = UP + RIGHT + DOWN;
-                                    map[bottomLefty, bottomLeftx + 1] = map[bottomLefty, bottomLeftx + 2] = UP + RIGHT + DOWN + LEFT;
-                                    map[bottomLefty + 1, bottomLeftx + 1] = map[bottomLefty + 1, bottomLeftx + 2] = UP + RIGHT + DOWN + LEFT;
-                                    map[bottomLefty + 2, bottomLeftx] = RIGHT + DOWN;
-                                    map[bottomLefty + 2, bottomLeftx + 1] = map[bottomLefty + 2, bottomLeftx + 2] = RIGHT + DOWN + LEFT;
-                                }
-                                else
-                                {
-                                    map[bottomLefty + 1, bottomLeftx] = UP + RIGHT;
-                                    map[bottomLefty + 1, bottomLeftx + 1] = map[bottomLefty + 1, bottomLeftx + 2] = UP + RIGHT + LEFT;
-                                    map[bottomLefty + 2, bottomLeftx] = UP + RIGHT + DOWN;
-                                    map[bottomLefty + 2, bottomLeftx + 1] = map[bottomLefty + 2, bottomLeftx + 2] = UP + RIGHT + DOWN + LEFT;
-                                }
-                            }
-                            else
-                            {
-                                map[bottomLefty + 1, bottomLeftx] = UP + RIGHT;
-                                map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT;
-                                map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT;
-                                map[bottomLefty + 2, bottomLeftx + 1] = DOWN + LEFT;
-                                if (i == 0)
-                                {
-                                    //Check if top or bottom piece
-                                    map[bottomLefty, bottomLeftx] = UP + RIGHT + DOWN;
-                                    map[bottomLefty, bottomLeftx + 1] = UP + LEFT + DOWN;
-                                    map[bottomLefty + 1, bottomLeftx] += DOWN;
-                                    map[bottomLefty + 1, bottomLeftx + 1] += DOWN;
-                                }
-                                else
-                                {
-                                    map[bottomLefty + 2, bottomLeftx] += UP;
-                                    map[bottomLefty + 2, bottomLeftx + 1] += UP;
-                                }
-                            }
-                        }
-                        else if (j == numCols - 1 && UnityEngine.Random.Range(0f, 1f) <= probWallMerging && i != 0 && i != (numRows - 1))
-                        {
-                            //If rightmost column but not corners, try merging walls
-                            map[bottomLefty + 1, bottomLeftx] = UP + RIGHT;
-                            map[bottomLefty + 1, bottomLeftx + 1] = map[bottomLefty + 1, bottomLeftx + 2] = UP + RIGHT + LEFT;
-                            map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT;
-                            map[bottomLefty + 2, bottomLeftx + 1] = map[bottomLefty + 2, bottomLeftx + 2] = RIGHT + DOWN + LEFT;
-                        }
-                        else
-                        {
-                            map[bottomLefty + 1, bottomLeftx] = UP + RIGHT;
-                            map[bottomLefty + 1, bottomLeftx + 1] = UP + LEFT;
-                            map[bottomLefty + 2, bottomLeftx] = DOWN + RIGHT;
-                            map[bottomLefty + 2, bottomLeftx + 1] = DOWN + LEFT;
-                        }
+                        map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = 0;
+                        map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = 0;
                         break;
                 }
             }
@@ -371,33 +244,16 @@ public class MazeGenerator : MonoBehaviour
         //Top path, and top and bottom outer walls of map
         for (int i = 0; i < mapCols - 1; i++)
         {
-            if (map[mapRows - 3, i] % 2 == 1)
-            {
-                map[mapRows - 2, i] = UP + DOWN;
-                map[mapRows - 2, i] += (map[mapRows - 2, i - 1] == -1) ? RIGHT : LEFT;
-                if (i == mapCols - 2 || i == mapCols - 3) map[mapRows - 2, i] += RIGHT;
-            }
-            else
-                map[mapRows - 2, i] = -1;
-            if (i == 0)
-            {
-                map[mapRows - 1, i] = (map[mapRows - 2, i] % 2 == 1) ? DOWN + RIGHT : RIGHT;
-                map[0, i] = (map[1, i] / 4 % 2 == 1) ? UP + RIGHT : RIGHT;
-            }
-            else
-            {
-                map[mapRows - 1, i] = (map[mapRows - 2, i] / 4 % 2 == 1) ? DOWN + RIGHT + LEFT : RIGHT + LEFT;
-                map[0, i] = (map[1, i] / 4 % 2 == 1) ? UP + RIGHT + LEFT : RIGHT + LEFT;
-            }
+            map[mapRows - 2, i] = (map[mapRows - 3, i] == 1) ? 0 : -1;
+            map[mapRows - 1, i] = map[0, i] = 0;
         }
 
         //Outer wall corners of map
-        map[0, mapCols - 1] = LEFT + UP;
-        map[mapRows - 1, mapCols - 1] = LEFT + DOWN;
+        map[0, mapCols - 1] = map[mapRows - 1, mapCols - 1] = 0;
 
         //Right and left outer wall of map
         for (int i = 1; i < mapRows - 1; i++)
-            map[i, mapCols - 1] = (map[i, mapCols - 2] / 2 % 2 == 1) ? UP + DOWN + LEFT : UP + DOWN;
+            map[i, mapCols - 1] = 0;
 
         int ghostSpawny = mapRows / 2 - 2;
         //Below ghost spawn
@@ -415,22 +271,37 @@ public class MazeGenerator : MonoBehaviour
 
         //Walls of ghost spawn
         for (int i = ghostSpawny + 1; i < ghostSpawny + 4; i++)
-            map[i, 4] = UP + DOWN;
-        for (int i = 1; i < 4; i++)
+            map[i, 4] = 0;
+        for (int i = 0; i < 5; i++)
+            map[ghostSpawny, i] = map[ghostSpawny + 4, i] = 0;
+
+        //Make first tunnel
+        for (int index = 0; index < mapRows; index++)
         {
-            map[ghostSpawny, i] = LEFT + RIGHT;
-            map[ghostSpawny + 4, i] = LEFT + RIGHT;
+            int possibleTunnelRow = UnityEngine.Random.Range(2, mapRows - 5);
+            if (map[possibleTunnelRow, mapCols - 2] != 0)
+            {
+                map[possibleTunnelRow, mapCols - 1] = -1;
+                break;
+            }
         }
-        //Corners of ghost spawn
-        map[ghostSpawny, 0] = RIGHT;
-        map[ghostSpawny + 4, 0] = RIGHT;
-        map[ghostSpawny, 4] = LEFT + UP;
-        map[ghostSpawny + 4, 4] = LEFT + DOWN;
+
+        //Check probability for second tunnel
+        if (UnityEngine.Random.Range(0f, 1f) <= probTunnel)
+            for (int index = 0; index < mapRows; index++)
+            {
+                int possibleTunnelRow = UnityEngine.Random.Range(6, mapRows - 2);
+                if (map[possibleTunnelRow, mapCols - 2] != 0 && map[possibleTunnelRow, mapCols - 1] != -1)
+                {
+                    map[possibleTunnelRow, mapCols - 1] = -1;
+                    break;
+                }
+            }
+
         return map;
     }
 
-    // Changed the parameters in the rendermap function to accept the tilemap and rule tile
-    private static void renderMap(int[,] map, Tilemap tilemap, TileBase tilebase)
+    private void renderMap(int[,] map)
     {
         int numRows = map.GetLength(0);
         int numCols = map.GetLength(1);
@@ -438,17 +309,23 @@ public class MazeGenerator : MonoBehaviour
         for (int i = 0; i < numRows; i++)
             for (int j = 0; j < numCols; j++)
             {
-                // Made the renderTile function only run when there is a wall
-                if (j == 0)
+                Vector3Int v = new Vector3Int(j, i - yOffset, 0);
+                if (map[i, j] != -1) renderTile(v, tileBase);
+                
+                if (j != 0)
                 {
-                    if (map[i, j] != -1) renderTile(j, i - yOffset, tilemap, tilebase);
-                }
-                else
-                {
-                    if (map[i, j] != -1) renderTile(j, i - yOffset, tilemap, tilebase);
-                    if (map[i, j] != -1) renderTile(-j, i - yOffset, tilemap, tilebase);
+                    Vector3Int mirrorV = new Vector3Int(-j, i - yOffset, 0);
+                    if (map[i, j] != -1) renderTile(mirrorV, tileBase);
                 }
             }
+    }
+
+    private void renderTile(Vector3Int pos, TileBase tile)
+    {
+        if (pos.x == 1 && pos.y == 2) return;
+        if (pos.x == 0 && pos.y == 2) return;
+        if (pos.x == -1 && pos.y == 2) return;
+        tilemap.SetTile(pos, tile);
     }
 
     private List<Tuple<int, int>> leftMostCells(int[,] cells)
@@ -473,37 +350,5 @@ public class MazeGenerator : MonoBehaviour
         if (y < cells.GetLength(0) - 1 && cells[y + 1, x] == -1) adjacentOpenCells.Add(UP);
         if (x < cells.GetLength(1) - 1 && cells[y, x + 1] == -1) adjacentOpenCells.Add(RIGHT);
         return adjacentOpenCells;
-    }
-
-    // Changed the renderTile function to work with the tiles and not sprites
-    private static void renderTile(int x, int y, Tilemap tilemap, TileBase tilebase)
-    {
-        // SetTile takes the coordinates of the grid and what tile you want to place
-        tilemap.SetTile(new Vector3Int(x, y, 0), tilebase);
-    }
-
-    private static int oppositeIndex(int index)
-    {
-        switch (index)
-        {
-            case RIGHT:
-                return LEFT;
-            case RIGHT + UP:
-                return LEFT + UP;
-            case RIGHT + DOWN:
-                return LEFT + DOWN;
-            case RIGHT + UP + DOWN:
-                return LEFT + UP + DOWN;
-            case LEFT:
-                return RIGHT;
-            case LEFT + UP:
-                return RIGHT + UP;
-            case LEFT + DOWN:
-                return RIGHT + DOWN;
-            case LEFT + UP + DOWN:
-                return RIGHT + UP + DOWN;
-            default:
-                return index;
-        }
     }
 }

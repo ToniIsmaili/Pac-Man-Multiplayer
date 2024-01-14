@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     public bool isInvincible = false;
     public int score = 0;
-
+    public Sprite sprite = null;
     public PowerUp powerUp = null;
 
     private void SpawnTile(GameObject tile)

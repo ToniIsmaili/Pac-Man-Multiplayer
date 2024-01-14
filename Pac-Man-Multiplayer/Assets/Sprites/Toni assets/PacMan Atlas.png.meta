@@ -551,7 +551,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -559,6 +559,69 @@ TextureImporter:
       bones: []
       spriteID: d27346d90ee8fb247854974db187ad38
       internalID: -1611799567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slow_down
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 073c534dc937cf3459656bb9ac4803dd
+      internalID: 1972412383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: speed_up
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 80
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20cbeaa573ee01942a6db1070a936494
+      internalID: -1551007665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: invincible_buff
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d4a33e2b560fcb42bf2d019e0f6e191
+      internalID: 83419604
       vertices: []
       indices: 
       edges: []
@@ -581,6 +644,7 @@ TextureImporter:
       bottom_wall: -813884373
       center_wall: 1125809041
       empty: -1611799567
+      invincible_buff: 83419604
       left_empty: -626078892
       left_stub: 1787685001
       left_wall: 1805540991
@@ -589,6 +653,8 @@ TextureImporter:
       right_empty: -1705575518
       right_stub: -1919549318
       right_wall: -2133552944
+      slow_down: 1972412383
+      speed_up: -1551007665
       top_empty: 851632362
       top_left: 1334937267
       top_right: -85547047

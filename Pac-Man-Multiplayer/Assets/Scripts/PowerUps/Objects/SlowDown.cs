@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 [CreateAssetMenu(menuName = "PowerUp/Speed decrease")]
 public class SlowDown : PowerUp
