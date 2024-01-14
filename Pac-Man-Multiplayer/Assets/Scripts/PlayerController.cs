@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PlayerController : MonoBehaviour
 {
@@ -6,6 +8,7 @@ public class PlayerController : MonoBehaviour
     public int score = 0;
     public Sprite sprite = null;
     public PowerUp powerUp = null;
+    private Tilemap tilemap;
 
     private void SpawnTile(GameObject tile)
     {
@@ -31,10 +34,30 @@ public class PlayerController : MonoBehaviour
                 powerUp.StartNeutralize(gameObject, 0f);
                 powerUp = null;
             }
-            else
+            else if (!powerUp.teleport_based)
             {
                 powerUp.Apply(gameObject);
                 powerUp = null;
+            }
+        }
+    }
+
+    private void UseTeleport()
+    {
+        if (tilemap == null)
+        {
+            tilemap = GameObject.Find("GameManager").GetComponent<GameManager>().tilemap;
+        }
+        if (powerUp != null && powerUp.teleport_based)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                if (GameManager.notWallTiles.Contains(tilemap.LocalToCell(pos) + new Vector3(0.5f, 0.5f, 0)))
+                {
+                    GameObject.FindGameObjectWithTag("PacMan").transform.position = tilemap.LocalToCell(pos) + new Vector3(0.5f, 0.5f, 0);
+                    powerUp = null;
+                }
             }
         }
     }
@@ -44,5 +67,6 @@ public class PlayerController : MonoBehaviour
         // Check if the player wants to use/drop powerup
         UsePowerUpCheck();
         DropPowerUpCheck();
+        UseTeleport();
     }
 }
