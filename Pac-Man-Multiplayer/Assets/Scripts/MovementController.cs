@@ -71,13 +71,18 @@ public class MovementController : MonoBehaviour
     private bool CanMove(Vector2 direction, string tag)
     {
         RaycastHit2D hit = Physics2D.BoxCast(transform.position, GetComponent<BoxCollider2D>().size, 0, direction, 0.1f);
-
         // Checks if raycast has collided with anything
         if (hit.collider == null)
             return true;
 
         // Returns true if it hasnt collided with "tag"
         return !hit.collider.CompareTag(tag);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(transform.position + new Vector3(player_input.x * 0.1f, player_input.y * 0.1f, 0), GetComponent<BoxCollider2D>().size);
     }
 
 }
