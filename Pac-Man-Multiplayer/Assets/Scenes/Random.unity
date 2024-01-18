@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 100017856}
   - component: {fileID: 100017855}
   m_Layer: 6
-  m_Name: FogOfWarMain
+  m_Name: FogOfWarCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
