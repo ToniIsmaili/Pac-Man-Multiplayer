@@ -3,7 +3,6 @@ Shader "Hidden/FogOfWarShader"
     Properties
     {
         _MainTex ("Main Texture", 2D) = "white" {}
-        _SecondaryTex ("Secondary Texture", 2D) = "white" {}
     }
     SubShader
     {
@@ -41,12 +40,11 @@ Shader "Hidden/FogOfWarShader"
             }
 
             sampler2D _MainTex;
-            sampler2D _SecondaryTex;
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv) + tex2D(_SecondaryTex, i.uv);
-                return col;
+                fixed4 col = tex2D(_MainTex, i.uv);
+                return fixed4(0,0,0, 0.7f - col.r);
             }
             ENDCG
         }
