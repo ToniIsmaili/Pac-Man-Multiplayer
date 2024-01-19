@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
-{sasdsadsd
+{
     private static MazeGenerator mazeGenerator;
     private List<Vector3> freeTiles = new List<Vector3>();
     public static List<Vector3> notWallTiles = new List<Vector3>();
