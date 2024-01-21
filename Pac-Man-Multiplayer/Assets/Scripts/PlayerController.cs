@@ -1,6 +1,7 @@
-using System.Collections.Generic;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public int score = 0;
     public Sprite sprite = null;
     public PowerUp powerUp = null;
+    private Image inventory;
     private Tilemap tilemap;
 
     private void SpawnTile(GameObject tile)
@@ -21,6 +23,7 @@ public class PlayerController : MonoBehaviour
         if (powerUp != null && Input.GetKeyDown(KeyCode.Q))
         {
             powerUp = null;
+            sprite = null;
         }
     }
 
@@ -33,11 +36,13 @@ public class PlayerController : MonoBehaviour
                 SpawnTile(powerUp.tile);
                 powerUp.StartNeutralize(gameObject, 0f);
                 powerUp = null;
+                sprite = null;
             }
             else if (!powerUp.teleport_based)
             {
                 powerUp.Apply(gameObject);
                 powerUp = null;
+                sprite = null;
             }
         }
     }
@@ -55,11 +60,24 @@ public class PlayerController : MonoBehaviour
                 Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 if (GameManager.notWallTiles.Contains(tilemap.LocalToCell(pos) + new Vector3(0.5f, 0.5f, 0)))
                 {
-                    GameObject.FindGameObjectWithTag("PacMan").transform.position = tilemap.LocalToCell(pos) + new Vector3(0.5f, 0.5f, 0);
+                    transform.position = tilemap.LocalToCell(pos) + new Vector3(0.5f, 0.5f, 0);
                     powerUp = null;
+                    sprite = null;
                 }
             }
         }
+    }
+
+    private void UpdateInventory()
+    {
+        if (inventory == null)
+        {
+            inventory = GameObject.Find("Inventory").GetComponent<Image>();
+        }
+
+        if (powerUp == null)
+            inventory.sprite = null;
+        else inventory.sprite = sprite;
     }
 
     private void Update()
@@ -68,5 +86,6 @@ public class PlayerController : MonoBehaviour
         UsePowerUpCheck();
         DropPowerUpCheck();
         UseTeleport();
+        UpdateInventory();
     }
 }

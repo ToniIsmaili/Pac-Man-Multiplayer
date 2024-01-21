@@ -1,11 +1,14 @@
+using Photon.Pun;
 using UnityEngine;
 
-public class PacDot : MonoBehaviour
+public class PacDot : MonoBehaviourPun
 {
     private GameManager gameManager = null;
+    private PhotonView PV;
 
     private void Start()
     {
+        PV = GetComponent<PhotonView>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
@@ -16,10 +19,23 @@ public class PacDot : MonoBehaviour
 
         if (collision.tag == "PacMan")
         {
-            Destroy(gameObject);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
+            else
+            {
+                if (PV.IsMine) PV.RPC("DestroyDot", RpcTarget.MasterClient);
+            }
+            
             collision.GetComponent<PlayerController>().score++;
-            gameManager.dots_remaining--;
+            if (gameManager != null) gameManager.dots_remaining--;
         }
+    }
 
+    [PunRPC]
+    public void DestroyDot()
+    {
+        PhotonNetwork.Destroy(gameObject);
     }
 }

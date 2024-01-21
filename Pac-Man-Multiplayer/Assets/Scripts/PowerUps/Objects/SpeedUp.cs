@@ -6,11 +6,6 @@ public class SpeedUp : PowerUp
     public float speed_increase = 100f;
     public float speed_duration = 5f;
 
-    public override void onPickUp(GameObject gameObject)
-    {
-        MonoBehaviour.Destroy(gameObject);
-    }
-
     public override void Apply(GameObject target)
     {
         MovementController player_controller = target.GetComponent<MovementController>();

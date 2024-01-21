@@ -11,7 +11,10 @@ public abstract class PowerUp : ScriptableObject
 
     public abstract void Apply(GameObject target);
 
-    public abstract void onPickUp(GameObject gameObject);
+    public void onPickUp(NetworkManager network, GameObject gameObject)
+    {
+        // network.DestroyObject(gameObject);
+    }
 
     public virtual void StartNeutralize(GameObject gameObject, float duration)
     {

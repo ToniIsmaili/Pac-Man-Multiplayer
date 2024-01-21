@@ -1,14 +1,18 @@
+using Photon.Pun;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourPun
 {
+    private PhotonView PV;
     private static MazeGenerator mazeGenerator;
-    private List<Vector3> freeTiles = new List<Vector3>();
+    private static NetworkManager networkManager;
+    private SyncMap sync_map;
+    private static List<Vector3> freeTiles = new List<Vector3>();
     public static List<Vector3> notWallTiles = new List<Vector3>();
+    private static bool inRoom = false, levelLoaded = false;
     private bool force_dot = false;
     public int power_up_chance = 5;
     public int dots_remaining;
@@ -19,34 +23,94 @@ public class GameManager : MonoBehaviour
     public GameObject player;
     public GameObject barrier;
     public GameObject tunnel;
+
     private void Start()
     {
         mazeGenerator = GetComponent<MazeGenerator>();
-        if (mazeGenerator != null) mazeGenerator.GenerateMaze();
-        GetFreeTiles();
-        StoreNotWalls();
-        SpawnPlayer(false);
-        PlaceDot();
-        dots_remaining = GameObject.FindGameObjectsWithTag("PacDot").Length;
-        PlacePowerUp();
+        networkManager = GetComponent<NetworkManager>();
+        sync_map = GetComponent<SyncMap>();
+        PV = GetComponent<PhotonView>();
+        networkManager.JoinRoom();
+    }
+
+    public void StartLevel()
+    {
+        if (networkManager.isMaster() && PV.IsMine)
+        {
+            if (mazeGenerator != null)
+            {
+                mazeGenerator.GenerateMaze();
+                sync_map.map = mazeGenerator.getMap();
+                mazeGenerator.renderMap(sync_map.map);
+            }
+            GetFreeTiles();
+            StoreNotWalls();
+            networkManager.SpawnPlayer(GetSpawnPoint());
+            PlaceDot();
+            dots_remaining = GameObject.FindGameObjectsWithTag("PacDot").Length;
+            PlacePowerUp();
+            levelLoaded = true;
+        }
+        else
+        {
+            if (sync_map.map != null)
+            {
+                if (sync_map.HasMapSynced())
+                {
+                    mazeGenerator.renderMap(sync_map.map);
+                    GetFreeTiles();
+                    StoreNotWalls();
+                    dots_remaining = GameObject.FindGameObjectsWithTag("PacDot").Length;
+                    networkManager.SpawnPlayer(GetSpawnPoint());
+                    levelLoaded = true;
+                } else
+                {
+                    Debug.Log("Failed Syncing");
+                }
+            }
+        }
     }
 
     private void Update()
     {
-        if (ZeroDots(dots_remaining)) GenerateLevel();
+        if (inRoom && !levelLoaded)
+        {
+            StartLevel();
+        }
+
+        if (ZeroDots(dots_remaining) && levelLoaded)
+        {
+            GenerateLevel();
+        }
+    }
+
+    public static void hasJoinedRoom(bool hasJoined)
+    {
+        inRoom = hasJoined;
     }
 
     private void GenerateLevel()
     {
-        DestroyAllTags("PowerUp");
-        tilemap.ClearAllTiles();
-        if (mazeGenerator != null) mazeGenerator.GenerateMaze();
-        GetFreeTiles();
-        StoreNotWalls();
-        SpawnPlayer(true);
-        PlaceDot();
-        dots_remaining = GameObject.FindGameObjectsWithTag("PacDot").Length;
-        PlacePowerUp();
+        if (networkManager.isMaster())
+        {
+            DestroyAllTags("PowerUp");
+            tilemap.ClearAllTiles();
+            if (mazeGenerator != null) mazeGenerator.GenerateMaze();
+            GetFreeTiles();
+            StoreNotWalls();
+            // SpawnPlayer(true);
+            networkManager.SpawnPlayer(GetSpawnPoint());
+            networkManager.SpawnPlayer(GetSpawnPoint());
+            PlaceDot();
+            dots_remaining = GameObject.FindGameObjectsWithTag("PacDot").Length;
+            PlacePowerUp();
+        } else
+        {
+            dots_remaining = GameObject.FindGameObjectsWithTag("PacDot").Length;
+            GetFreeTiles();
+            StoreNotWalls();
+            networkManager.SpawnPlayer(GetSpawnPoint());
+        }
     }
 
     private bool ZeroDots(int dots_remaining)
@@ -83,11 +147,13 @@ public class GameManager : MonoBehaviour
             if (force_dot) {
                 // Spawns a dot by force
                 force_dot = false;
-                Instantiate(dots, v, Quaternion.identity);
+                //Instantiate(dots, v, Quaternion.identity);
+                networkManager.SpawnDot(v);
                 freeTiles.Remove(v);
             } else if (Random.Range(0, 100) > power_up_chance) {
                 // If Random.Range is greater than power_up_chance spawn dot
-                Instantiate(dots, v, Quaternion.identity);
+                //Instantiate(dots, v, Quaternion.identity);
+                networkManager.SpawnDot(v);
                 freeTiles.Remove(v);
             } else {
                 // Doesnt spawn dot (free for powerup)
@@ -102,13 +168,13 @@ public class GameManager : MonoBehaviour
 
         foreach (Vector3 v in freeTiles.ToList())
         {
-            Instantiate(powerup[Random.Range(0, powerups)], v, Quaternion.identity);
+            networkManager.SpawnPowerUp(powerup[Random.Range(0, powerups)].name, v);
             freeTiles.Remove(v);
         }
     }
 
     // Spawns player at random free tile
-    private void SpawnPlayer(bool isPlayerInScene)
+    /*private void SpawnPlayer(bool isPlayerInScene)
     {
         int index = Random.Range(0, freeTiles.Count - 1);
         if (player != null)
@@ -124,6 +190,13 @@ public class GameManager : MonoBehaviour
 
             freeTiles.RemoveAt(index);
         }
+    }*/
+
+    public static Vector3 GetSpawnPoint()
+    {
+        Vector2 spawnPoint = freeTiles[Random.Range(0, freeTiles.Count - 1)];
+        freeTiles.Remove(spawnPoint);
+        return spawnPoint;
     }
 
     private static void DestroyAllTags(string tag)
@@ -165,17 +238,20 @@ public class GameManager : MonoBehaviour
     {
         if (i == 1 && j == 2)
         {
-            Instantiate(barrier, new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.identity);
+            networkManager.SpawnBarrier(new Vector3(i + 0.5f, j + 0.5f, 0));
+            // Instantiate(barrier, new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.identity);
             return false;
         }
         if (i == 0 && j == 2)
         {
-            Instantiate(barrier, new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.identity);
+            networkManager.SpawnBarrier(new Vector3(i + 0.5f, j + 0.5f, 0));
+            // Instantiate(barrier, new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.identity);
             return false;
         }
         if (i == -1 && j == 2)
         {
-            Instantiate(barrier, new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.identity);
+            networkManager.SpawnBarrier(new Vector3(i + 0.5f, j + 0.5f, 0));
+            // Instantiate(barrier, new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.identity);
             return false;
         }
         if (i <= 3 && i >= -3 && j <= 1 && j >= -1) return false;
