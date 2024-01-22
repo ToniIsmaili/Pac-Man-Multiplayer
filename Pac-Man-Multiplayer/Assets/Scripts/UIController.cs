@@ -16,7 +16,7 @@ public class UIController : MonoBehaviour
         if (player == null) player = GameObject.FindGameObjectWithTag("PacMan");
 
         if (player == null) return;
-        if (player.GetComponent<PlayerController>().powerUp == null)
+        if (player.GetComponent<SyncPowerUp>().powerup == null)
             inventory.sprite = null;
         else inventory.sprite = player.GetComponent<PlayerController>().sprite;
     }

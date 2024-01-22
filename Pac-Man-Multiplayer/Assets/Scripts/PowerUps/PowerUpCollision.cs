@@ -13,18 +13,20 @@ public class PowerUpCollision : MonoBehaviourPun
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.tag == "PacMan" && collider.GetComponent<PlayerController>().powerUp == null)
+        if (collider.tag == "PacMan" && collider.GetComponent<SyncPowerUp>().powerup == null)
         {
-            Debug.Log("Collided with player");
-            collider.GetComponent<PlayerController>().powerUp = powerUp;
+            int playerId = collider.GetComponent<PhotonView>().ViewID;
+
+            PV.RPC("SetPowerUp", RpcTarget.All, playerId);
+            // collider.GetComponent<PlayerController>().powerUp = powerUp;
             collider.GetComponent <PlayerController>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
             
-            if (PhotonNetwork.IsMasterClient)
+            if (PV.IsMine)
             {
                 PhotonNetwork.Destroy(gameObject);
             } else
             {
-                if (PV.IsMine) PV.RPC("DestroyPowerUp", RpcTarget.MasterClient);
+                PV.RPC("DestroyPowerUp", RpcTarget.MasterClient);
             }
         }
     }
@@ -32,8 +34,14 @@ public class PowerUpCollision : MonoBehaviourPun
     [PunRPC]
     public void DestroyPowerUp()
     {
-        Debug.Log("Destroyed");
         PhotonNetwork.Destroy(gameObject);
+    }
+
+    [PunRPC]
+    public void SetPowerUp(int playerId)
+    {
+        GameObject player = PhotonView.Find(playerId).gameObject;
+        player.GetComponent<SyncPowerUp>().Sync(powerUp.name);
     }
 
 }

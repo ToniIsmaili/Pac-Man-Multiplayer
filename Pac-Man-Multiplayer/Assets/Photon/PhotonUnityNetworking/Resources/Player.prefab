@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 8621679289934673397}
   - component: {fileID: 131504405211076981}
   - component: {fileID: 846323226250869145}
+  - component: {fileID: -2348169293623498004}
   m_Layer: 7
   m_Name: Player
   m_TagString: PacMan
@@ -192,7 +193,7 @@ MonoBehaviour:
   isInvincible: 0
   score: 0
   sprite: {fileID: 0}
-  powerUp: {fileID: 0}
+  sync_powerUp: {fileID: 0}
 --- !u!114 &7684418599487290058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,12 +258,12 @@ MonoBehaviour:
     ExtrapolateIncludingRoundTripTime: 1
     ExtrapolateNumberOfStoredPositions: 1
   m_RotationModel:
-    SynchronizeEnabled: 0
-    InterpolateOption: 1
+    SynchronizeEnabled: 1
+    InterpolateOption: 0
     InterpolateRotateTowardsSpeed: 180
     InterpolateLerpSpeed: 5
   m_ScaleModel:
-    SynchronizeEnabled: 0
+    SynchronizeEnabled: 1
     InterpolateOption: 0
     InterpolateMoveTowardsSpeed: 1
     InterpolateLerpSpeed: 0
@@ -282,3 +283,21 @@ MonoBehaviour:
   - {fileID: 996407804891286305}
   - {fileID: 812675268875499342}
   - {fileID: 846323226250869145}
+--- !u!114 &-2348169293623498004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455291652818713490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e80f9c035576764ebdd8496623a0c43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  powerup: {fileID: 0}
+  powerup_list:
+  - {fileID: 11400000, guid: 1edc24bebea0e36429e445f50d9126d1, type: 2}
+  - {fileID: 11400000, guid: 0a6dcf125d1b617418c40041c2497c5d, type: 2}
+  - {fileID: 11400000, guid: 8e8bce2e0bf59be4eba8999131aa9cb8, type: 2}
+  - {fileID: 11400000, guid: 571a8aa8e6400ff4380e690e707bdae3, type: 2}
