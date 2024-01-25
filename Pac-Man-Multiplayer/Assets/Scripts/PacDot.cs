@@ -3,14 +3,12 @@ using UnityEngine;
 
 public class PacDot : MonoBehaviourPun
 {
-    private GameManager gameManager = null;
     private AudioManager audioManager = null;
     private PhotonView PV;
 
     private void Start()
     {
         PV = GetComponent<PhotonView>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
@@ -37,7 +35,7 @@ public class PacDot : MonoBehaviourPun
 
             // Needs syncing
             collision.GetComponent<PlayerController>().score++;
-            if (gameManager != null) gameManager.dots_remaining--;
+            GameManager.DecreaseDotsRemaining();
         }
     }
 

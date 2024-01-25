@@ -55,14 +55,14 @@ public class PlayerController : MonoBehaviour
     {
         if (tilemap == null)
         {
-            tilemap = GameObject.Find("GameManager").GetComponent<GameManager>().tilemap;
+            tilemap = GameObject.Find("MapManager").GetComponent<MazeGenerator>().tilemap;
         }
         if (sync_powerUp.powerup != null && sync_powerUp.powerup.teleport_based)
         {
             if (Input.GetMouseButtonDown(0))
             {
                 Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (GameManager.notWallTiles.Contains(tilemap.LocalToCell(pos) + new Vector3(0.5f, 0.5f, 0)))
+                if (MapManager.notWallTiles.Contains(tilemap.LocalToCell(pos) + new Vector3(0.5f, 0.5f, 0)))
                 {
                     transform.position = tilemap.LocalToCell(pos) + new Vector3(0.5f, 0.5f, 0);
                     sync_powerUp.powerup = null;

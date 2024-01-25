@@ -5,11 +5,12 @@ using UnityEngine;
 public class MapManager : MonoBehaviour
 {
     private static MazeGenerator mazeGenerator;
-    private static NetworkManager networkManager;
     private SyncMap sync_map;
 
     private static List<Vector3> freeTiles = new List<Vector3>();
     public static List<Vector3> notWallTiles = new List<Vector3>();
+
+    private GameObject player = null;
 
     [Header("Power Ups")]
     [Tooltip("The % chance for a Power Up to spawn.")]
@@ -22,17 +23,11 @@ public class MapManager : MonoBehaviour
     void Start()
     {
         mazeGenerator = GetComponent<MazeGenerator>();
-        networkManager = GetComponent<NetworkManager>();
         sync_map = GetComponent<SyncMap>();
     }
 
-    void Update()
-    {
-        
-    }
-
     // Generates a random level (should only be run on the master client)
-    private void GenerateLevel()
+    public void GenerateLevel(NetworkManager networkManager)
     {
         if (mazeGenerator == null)
         {
@@ -55,17 +50,36 @@ public class MapManager : MonoBehaviour
         sync_map.map = mazeGenerator.getMap();
         mazeGenerator.renderMap(sync_map.map);
 
-        GetFreeTiles();
+        GetFreeTiles(networkManager);
         StoreNotWalls();
-        // networkManager.SpawnPlayer(GetSpawnPoint());
-        PlaceDot();
-        PlacePowerUp();
-        // dots_remaining = GameObject.FindGameObjectsWithTag("PacDot").Length;
+        HandlePlayer(networkManager);
+        PlaceDot(networkManager);
+        PlacePowerUp(networkManager);
+        GameManager.SetDotsRemaining(GameObject.FindGameObjectsWithTag("PacDot").Length);
+    }
 
+    // Handles the spawning/teleporting of the player at the beginning of a level
+    private void HandlePlayer(NetworkManager networkManager)
+    {
+        if (player == null)
+        {
+            player = networkManager.Spawn("Player", GetSpawnPoint());
+            return;
+        }
+
+        player.transform.position = GetSpawnPoint();
+    }
+
+    // Returns a random position from freeTiles list and then removes it from the list.
+    private static Vector3 GetSpawnPoint()
+    {
+        Vector2 spawnPoint = freeTiles[Random.Range(0, freeTiles.Count - 1)];
+        freeTiles.Remove(spawnPoint);
+        return spawnPoint;
     }
 
     // Stores all the positions of not wall tiles in the list.
-    private void GetFreeTiles()
+    private void GetFreeTiles(NetworkManager networkManager)
     {
         for (int i = mazeGenerator.tilemap.cellBounds.position.x; i < mazeGenerator.tilemap.cellBounds.size.x + mazeGenerator.tilemap.cellBounds.position.x; i++)
         {
@@ -73,7 +87,7 @@ public class MapManager : MonoBehaviour
             {
                 if (mazeGenerator.tilemap.GetTile(new Vector3Int(i, j, 0)) == null)
                 {
-                    if (isGhostSpawn(i, j) && isTunnel(i, j)) freeTiles.Add(new Vector3(i, j, 0));
+                    if (isGhostSpawn(networkManager, i, j) && isTunnel(networkManager, i, j)) freeTiles.Add(new Vector3(i, j, 0));
                 }
             }
         }
@@ -97,7 +111,9 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    private bool isTunnel(int i, int j)
+    // Checks if coordinates are supposed to be tunnels, if yes it returns false meaning those coordinates
+    // shouldn't be saved in the freeTiles list
+    private bool isTunnel(NetworkManager networkManager, int i, int j)
     {
         if (i == mazeGenerator.tilemap.cellBounds.position.x)
         {
@@ -114,7 +130,9 @@ public class MapManager : MonoBehaviour
         return true;
     }
 
-    private bool isGhostSpawn(int i, int j)
+    // Checks if coordinates are supposed to be ghosts spawn, if yes it returns false meaning those coordinates
+    // shouldn't be saved in the freeTiles list
+    private bool isGhostSpawn(NetworkManager networkManager, int i, int j)
     {
         if (i == 1 && j == 2)
         {
@@ -135,7 +153,9 @@ public class MapManager : MonoBehaviour
         return true;
     }
 
-    private void PlaceDot()
+    // Places PacDot in the positions stored in freeTiles (then removing that position), with a chance to not place a dot in a
+    // certain position, leaving it blank for a power up
+    private void PlaceDot(NetworkManager networkManager)
     {
         foreach (Vector3 position in freeTiles.ToList())
         {
@@ -154,20 +174,21 @@ public class MapManager : MonoBehaviour
             }
             else
             {
-                // Doesnt spawn dot (free for powerup)
+                // Doesnt spawn dot (free for powerup), forces dot to spread out power ups
                 force_dot = true;
             }
         }
     }
 
-    private void PlacePowerUp()
+    // Places a random power up from the list of power ups in all the positions left in freeTiles
+    private void PlacePowerUp(NetworkManager networkManager)
     {
         int powerups = powerUps.Length;
 
-        foreach (Vector3 v in freeTiles.ToList())
+        foreach (Vector3 position in freeTiles.ToList())
         {
-            networkManager.SpawnPowerUp(powerUps[Random.Range(0, powerups)].name, v);
-            freeTiles.Remove(v);
+            networkManager.Spawn(powerUps[Random.Range(0, powerups)].name, position);
+            freeTiles.Remove(position);
         }
     }
 

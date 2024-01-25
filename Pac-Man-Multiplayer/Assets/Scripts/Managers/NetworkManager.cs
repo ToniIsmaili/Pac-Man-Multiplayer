@@ -24,37 +24,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("Joined room");
-        GameManager.hasJoinedRoom(true);
+        GameManager.SetInRoom(true);
     }
 
-    public void SpawnPlayer(Vector3 spawnpoint)
+    public GameObject Spawn(string prefabName, Vector3 position)
     {
-        PhotonNetwork.Instantiate("Player", spawnpoint, Quaternion.identity);
+        return PhotonNetwork.Instantiate(prefabName, position, Quaternion.identity);
     }
 
-    public void SpawnDot(Vector3 vector)
+    public GameObject Spawn(string prefabName, Vector3 position, Quaternion rotation)
     {
-        PhotonNetwork.Instantiate("PacDot", vector, Quaternion.identity);
-    }
-
-    public void SpawnBarrier(Vector3 vector)
-    {
-        PhotonNetwork.Instantiate("Barrier", vector, Quaternion.identity);
-    }
-
-    public void SpawnPowerUp(string powerUp, Vector3 vector)
-    {
-        PhotonNetwork.Instantiate(powerUp, vector, Quaternion.identity);
-    }
-
-    public void Spawn(string prefabName, Vector3 position)
-    {
-        PhotonNetwork.Instantiate(prefabName, position, Quaternion.identity);
-    }
-
-    public void Spawn(string prefabName, Vector3 position, Quaternion rotation)
-    {
-        PhotonNetwork.Instantiate(prefabName, position, rotation);
+        return PhotonNetwork.Instantiate(prefabName, position, rotation);
     }
 
     public void DestroyAllTags(string tag)
