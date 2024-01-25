@@ -5,10 +5,12 @@ public class PowerUpCollision : MonoBehaviourPun
 {
     public PowerUp powerUp;
     private PhotonView PV;
+    private AudioManager audioManager = null;
 
     private void Start()
     {
         PV = GetComponent<PhotonView>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
@@ -17,10 +19,14 @@ public class PowerUpCollision : MonoBehaviourPun
         {
             int playerId = collider.GetComponent<PhotonView>().ViewID;
 
+            if (collider.GetComponent<PhotonView>().IsMine)
+            {
+                audioManager.PlayPowerUpSound();
+            }
+
             PV.RPC("SetPowerUp", RpcTarget.All, playerId);
-            // collider.GetComponent<PlayerController>().powerUp = powerUp;
             collider.GetComponent <PlayerController>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
-            
+
             if (PV.IsMine)
             {
                 PhotonNetwork.Destroy(gameObject);

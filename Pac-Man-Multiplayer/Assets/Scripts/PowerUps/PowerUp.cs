@@ -11,11 +11,6 @@ public abstract class PowerUp : ScriptableObject
 
     public abstract void Apply(GameObject target);
 
-    public void onPickUp(NetworkManager network, GameObject gameObject)
-    {
-        // network.DestroyObject(gameObject);
-    }
-
     public virtual void StartNeutralize(GameObject gameObject, float duration)
     {
         MonoBehaviour = gameObject.GetComponent<MonoBehaviour>();

@@ -1,6 +1,5 @@
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections;
 using UnityEngine;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
@@ -48,9 +47,23 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.Instantiate(powerUp, vector, Quaternion.identity);
     }
 
-    IEnumerator Coroutine()
+    public void Spawn(string prefabName, Vector3 position)
     {
-        yield return new WaitForSeconds(5);
+        PhotonNetwork.Instantiate(prefabName, position, Quaternion.identity);
+    }
+
+    public void Spawn(string prefabName, Vector3 position, Quaternion rotation)
+    {
+        PhotonNetwork.Instantiate(prefabName, position, rotation);
+    }
+
+    public void DestroyAllTags(string tag)
+    {
+        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag(tag);
+        foreach (GameObject go in gameObjects)
+        {
+            PhotonNetwork.Destroy(go);
+        }
     }
 
     public bool isMaster()

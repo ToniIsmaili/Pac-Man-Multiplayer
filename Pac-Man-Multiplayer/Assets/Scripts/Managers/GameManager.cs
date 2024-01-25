@@ -17,11 +17,7 @@ public class GameManager : MonoBehaviourPun
     public int power_up_chance = 5;
     public int dots_remaining;
     public Tilemap tilemap;
-    public Tilemap corridor;
     public GameObject[] powerup;
-    public GameObject dots;
-    public GameObject player;
-    public GameObject barrier;
     public GameObject tunnel;
 
     private void Start()
@@ -93,12 +89,11 @@ public class GameManager : MonoBehaviourPun
     {
         if (networkManager.isMaster())
         {
-            DestroyAllTags("PowerUp");
+            networkManager.DestroyAllTags("PowerUp");
             tilemap.ClearAllTiles();
             if (mazeGenerator != null) mazeGenerator.GenerateMaze();
             GetFreeTiles();
             StoreNotWalls();
-            // SpawnPlayer(true);
             networkManager.SpawnPlayer(GetSpawnPoint());
             networkManager.SpawnPlayer(GetSpawnPoint());
             PlaceDot();
@@ -147,7 +142,6 @@ public class GameManager : MonoBehaviourPun
             if (force_dot) {
                 // Spawns a dot by force
                 force_dot = false;
-                //Instantiate(dots, v, Quaternion.identity);
                 networkManager.SpawnDot(v);
                 freeTiles.Remove(v);
             } else if (Random.Range(0, 100) > power_up_chance) {
@@ -173,25 +167,6 @@ public class GameManager : MonoBehaviourPun
         }
     }
 
-    // Spawns player at random free tile
-    /*private void SpawnPlayer(bool isPlayerInScene)
-    {
-        int index = Random.Range(0, freeTiles.Count - 1);
-        if (player != null)
-        {
-            if (isPlayerInScene)
-            {
-                // Might cause problem with multiplayer
-                GameObject.FindGameObjectWithTag("PacMan").transform.position = freeTiles[index];
-            } else
-            {
-                Instantiate(player, freeTiles[index], Quaternion.identity);
-            }
-
-            freeTiles.RemoveAt(index);
-        }
-    }*/
-
     public static Vector3 GetSpawnPoint()
     {
         Vector2 spawnPoint = freeTiles[Random.Range(0, freeTiles.Count - 1)];
@@ -199,14 +174,14 @@ public class GameManager : MonoBehaviourPun
         return spawnPoint;
     }
 
-    private static void DestroyAllTags(string tag)
+    /*private static void DestroyAllTags(string tag)
     {
         GameObject[] gameObjects = GameObject.FindGameObjectsWithTag(tag);
         foreach (GameObject go in gameObjects)
         {
             Destroy(go);
         }
-    }
+    }*/
 
     private bool isTunnel(int i, int j)
     {
@@ -239,19 +214,16 @@ public class GameManager : MonoBehaviourPun
         if (i == 1 && j == 2)
         {
             networkManager.SpawnBarrier(new Vector3(i + 0.5f, j + 0.5f, 0));
-            // Instantiate(barrier, new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.identity);
             return false;
         }
         if (i == 0 && j == 2)
         {
             networkManager.SpawnBarrier(new Vector3(i + 0.5f, j + 0.5f, 0));
-            // Instantiate(barrier, new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.identity);
             return false;
         }
         if (i == -1 && j == 2)
         {
             networkManager.SpawnBarrier(new Vector3(i + 0.5f, j + 0.5f, 0));
-            // Instantiate(barrier, new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.identity);
             return false;
         }
         if (i <= 3 && i >= -3 && j <= 1 && j >= -1) return false;

@@ -325,6 +325,11 @@ public class MazeGenerator : MonoBehaviour
             }
     }
 
+    public void ClearTileMap()
+    {
+        tilemap.ClearAllTiles();
+    }
+
     private void renderTile(Vector3Int pos, TileBase tile)
     {
         if (pos.x == 1 && pos.y == 2) return;
