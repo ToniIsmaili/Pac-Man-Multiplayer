@@ -10,6 +10,7 @@ public class PacDot : MonoBehaviourPun
     {
         PV = GetComponent<PhotonView>();
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        SyncPacDots.IncreaseDotsRemaining();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -27,6 +28,7 @@ public class PacDot : MonoBehaviourPun
             if (PV.IsMine)
             {
                 PhotonNetwork.Destroy(gameObject);
+                SyncPacDots.DecreaseDotsRemaining();
             }
             else
             {
@@ -35,13 +37,13 @@ public class PacDot : MonoBehaviourPun
 
             // Needs syncing
             collision.GetComponent<PlayerController>().score++;
-            GameManager.DecreaseDotsRemaining();
         }
     }
 
     [PunRPC]
     public void DestroyDot()
     {
+        SyncPacDots.DecreaseDotsRemaining();
         PhotonNetwork.Destroy(gameObject);
     }
 }

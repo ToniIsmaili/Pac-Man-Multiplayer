@@ -50,12 +50,44 @@ public class MapManager : MonoBehaviour
         sync_map.map = mazeGenerator.getMap();
         mazeGenerator.renderMap(sync_map.map);
 
+        // Fills freeTiles and notWallTiles lists with positions
         GetFreeTiles(networkManager);
         StoreNotWalls();
+
         HandlePlayer(networkManager);
+
         PlaceDot(networkManager);
         PlacePowerUp(networkManager);
-        GameManager.SetDotsRemaining(GameObject.FindGameObjectsWithTag("PacDot").Length);
+    }
+
+    // Joins the level (should be run on other clients)
+    public void JoinLevel(NetworkManager networkManager)
+    {
+        if (sync_map.map == null)
+        {
+            Debug.LogError("sync_map.map is null! - MapManager");
+            return;
+        }
+
+        // If the map hasn't synchronized, return the function
+        if (!sync_map.HasMapSynced())
+        {
+            return;
+        }
+
+        // Instantiates the map locally
+        mazeGenerator.renderMap(sync_map.map);
+
+        // Fills freeTiles and notWallTiles lists with positions
+        GetFreeTiles(networkManager);
+        StoreNotWalls();
+
+        HandlePlayer(networkManager);
+    }
+
+    public bool PlayerInScene()
+    {
+        return player != null;
     }
 
     // Handles the spawning/teleporting of the player at the beginning of a level

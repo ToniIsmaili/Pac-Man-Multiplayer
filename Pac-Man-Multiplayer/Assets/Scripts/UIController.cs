@@ -28,7 +28,7 @@ public class UIController : MonoBehaviour
 
     private void UpdateScore()
     {
-        score.text = GameManager.GetDotsRemaining().ToString();
+        score.text = SyncPacDots.GetDotsRemaining().ToString();
     }
 
     void Update()

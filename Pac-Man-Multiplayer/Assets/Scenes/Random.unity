@@ -372,6 +372,7 @@ GameObject:
   - component: {fileID: 591786364}
   - component: {fileID: 591786370}
   - component: {fileID: 591786369}
+  - component: {fileID: 591786371}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -463,6 +464,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1011c6fd87130d409db5365e8445f6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &591786371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591786363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7d64c8e48368404ebcfaee57b81e3cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ignoreScripts:
+  - {fileID: 591786371}
+  - {fileID: 591786370}
+  - {fileID: 591786364}
+  - {fileID: 591786368}
 --- !u!1 &675854767
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,6 +613,7 @@ GameObject:
   - component: {fileID: 868105506}
   - component: {fileID: 868105508}
   - component: {fileID: 868105509}
+  - component: {fileID: 868105513}
   - component: {fileID: 868105510}
   - component: {fileID: 868105512}
   m_Layer: 0
@@ -661,7 +680,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 1
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 868105513}
   sceneViewId: 999
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -679,10 +699,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ignoreScripts:
   - {fileID: 868105512}
-  - {fileID: 0}
   - {fileID: 868105509}
-  - {fileID: 0}
   - {fileID: 868105508}
+  - {fileID: 868105513}
+--- !u!114 &868105513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 868105505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15583000871028748bbbaa59728c3978, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &905762967
 GameObject:
   m_ObjectHideFlags: 0
