@@ -46,7 +46,6 @@ public class SyncMap : MonoBehaviourPun, IPunObservable
 
     public void ResetMap()
     {
-        Debug.LogError("Map has been reset");
         map = new int[mapRows, mapCols];
     }
 }

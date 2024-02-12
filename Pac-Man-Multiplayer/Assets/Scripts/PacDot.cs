@@ -20,20 +20,18 @@ public class PacDot : MonoBehaviourPun
 
         if (collision.tag == "PacMan")
         {
+            if (PV == null)
+            {
+                Debug.LogError("Photon View is null");
+                return;
+            }
+
             if (collision.GetComponent<PhotonView>().IsMine)
             {
                 audioManager.PlayDotSound();
             }
-
-            if (PV.IsMine)
-            {
-                PhotonNetwork.Destroy(gameObject);
-                SyncPacDots.DecreaseDotsRemaining();
-            }
-            else
-            {
-                PV.RPC("DestroyDot", RpcTarget.MasterClient);
-            }
+        
+            PV.RPC("DestroyDot", RpcTarget.MasterClient); 
 
             // Needs syncing
             collision.GetComponent<PlayerController>().score++;
