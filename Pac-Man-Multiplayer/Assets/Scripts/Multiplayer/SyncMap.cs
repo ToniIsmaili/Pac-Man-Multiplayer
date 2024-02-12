@@ -1,4 +1,5 @@
 using Photon.Pun;
+using UnityEngine;
 
 public class SyncMap : MonoBehaviourPun, IPunObservable
 {
@@ -8,7 +9,7 @@ public class SyncMap : MonoBehaviourPun, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (stream.IsWriting)
+        if (stream.IsWriting && PhotonNetwork.IsMasterClient)
         {
             for (int i = 0; i < map.GetLength(0); i++)
             {
@@ -41,5 +42,11 @@ public class SyncMap : MonoBehaviourPun, IPunObservable
         }
 
         return false;
+    }
+
+    public void ResetMap()
+    {
+        Debug.LogError("Map has been reset");
+        map = new int[mapRows, mapCols];
     }
 }

@@ -22,18 +22,19 @@ public class GameManager : MonoBehaviourPun
             return;
         }
 
-        // TODO fix level generator pacdots dont line up
         if (PhotonNetwork.IsMasterClient && SyncPacDots.GetDotsRemaining() == 0)
         {
+            mapManager.GetComponent<PhotonView>().RPC("ResetMap", RpcTarget.AllBuffered);
             mapManager.GenerateLevel(networkManager);
             return;
         }
 
-        if (SyncPacDots.GetDotsRemaining() == 0 || !mapManager.PlayerInScene())
+        if (!PhotonNetwork.IsMasterClient && mapManager.reset || !mapManager.PlayerInScene())
         {
             mapManager.JoinLevel(networkManager);
             return;
         }
+
     }
 
     public static void SetInRoom(bool hasJoined)

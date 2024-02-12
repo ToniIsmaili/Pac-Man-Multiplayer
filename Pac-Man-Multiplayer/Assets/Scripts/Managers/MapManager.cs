@@ -1,8 +1,9 @@
+using Photon.Pun;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MapManager : MonoBehaviour
+public class MapManager : MonoBehaviourPun
 {
     private static MazeGenerator mazeGenerator;
     private SyncMap sync_map;
@@ -11,6 +12,7 @@ public class MapManager : MonoBehaviour
     public static List<Vector3> notWallTiles = new List<Vector3>();
 
     private GameObject player = null;
+    public bool reset = true;
 
     [Header("Power Ups")]
     [Tooltip("The % chance for a Power Up to spawn.")]
@@ -43,7 +45,7 @@ public class MapManager : MonoBehaviour
         networkManager.DestroyAllTags("PowerUp");
         mazeGenerator.ClearTileMap();
 
-        // Generates a 2D array of the map ( -1 = empty & 0 = tile )
+        // Generates a 2D array of the map ( -1 = tile & 0 = emtpy )
         mazeGenerator.GenerateMaze();
 
         // Synchronizes the map with all the players and instantiates it locally
@@ -69,11 +71,15 @@ public class MapManager : MonoBehaviour
             return;
         }
 
-        // If the map hasn't synchronized, return the function
+        // If the map hasn't synchronized, stop the function
         if (!sync_map.HasMapSynced())
         {
             return;
         }
+
+        // Resets the level by destroying all Tiles, should only run when there
+        // are no more PacDots remaining or at the start of the game.
+        mazeGenerator.ClearTileMap();
 
         // Instantiates the map locally
         mazeGenerator.renderMap(sync_map.map);
@@ -83,11 +89,19 @@ public class MapManager : MonoBehaviour
         StoreNotWalls();
 
         HandlePlayer(networkManager);
+        reset = false;
     }
 
     public bool PlayerInScene()
     {
         return player != null;
+    }
+
+    [PunRPC]
+    public void ResetMap()
+    {
+        sync_map.ResetMap();
+        reset = true;
     }
 
     // Handles the spawning/teleporting of the player at the beginning of a level
