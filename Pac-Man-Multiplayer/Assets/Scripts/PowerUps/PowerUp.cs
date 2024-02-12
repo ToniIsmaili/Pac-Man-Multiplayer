@@ -11,8 +11,6 @@ public abstract class PowerUp : ScriptableObject
 
     public abstract void Apply(GameObject target);
 
-    public abstract void onPickUp(GameObject gameObject);
-
     public virtual void StartNeutralize(GameObject gameObject, float duration)
     {
         MonoBehaviour = gameObject.GetComponent<MonoBehaviour>();

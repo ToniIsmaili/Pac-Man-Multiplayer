@@ -6,11 +6,11 @@ public class TunnelController : MonoBehaviour
     {
         if (collision.collider.CompareTag("PacMan"))
         {
-            TeleportToTunnel();
+            TeleportToTunnel(collision.collider);
         }
     }
 
-    private void TeleportToTunnel()
+    private void TeleportToTunnel(Collider2D collider)
     {
         if (transform.rotation.z == 0)
         {
@@ -20,7 +20,7 @@ public class TunnelController : MonoBehaviour
                 if (hit.collider.CompareTag("Tunnel"))
                 {
                     // Teleport player
-                    GameObject.FindGameObjectWithTag("PacMan").transform.position = hit.transform.position;
+                    collider.transform.position = hit.transform.position;
                 }
             }
         }
@@ -33,7 +33,7 @@ public class TunnelController : MonoBehaviour
                 if (hit.collider.CompareTag("Tunnel"))
                 {
                     // Teleport player
-                    GameObject.FindGameObjectWithTag("PacMan").transform.position = hit.transform.position;
+                    collider.transform.position = hit.transform.position;
                 }
             }
         }

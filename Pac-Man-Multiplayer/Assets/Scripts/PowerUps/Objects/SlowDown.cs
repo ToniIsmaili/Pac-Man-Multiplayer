@@ -6,11 +6,6 @@ public class SlowDown : PowerUp
     public float effect_duration = 10f;
     public float speed_decrease = 50f;
 
-    public override void onPickUp(GameObject gameObject)
-    {
-        MonoBehaviour.Destroy(gameObject);
-    }
-
     public override void StartNeutralize(GameObject gameObject, float duration)
     {
         gameObject.GetComponent<MovementController>().speed += speed_decrease;

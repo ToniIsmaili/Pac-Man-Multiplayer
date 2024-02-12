@@ -1,12 +1,16 @@
+using Photon.Pun;
 using UnityEngine;
 
-public class PacDot : MonoBehaviour
+public class PacDot : MonoBehaviourPun
 {
-    private GameManager gameManager = null;
+    private AudioManager audioManager = null;
+    private PhotonView PV;
 
     private void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        PV = GetComponent<PhotonView>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        SyncPacDots.IncreaseDotsRemaining();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -16,10 +20,28 @@ public class PacDot : MonoBehaviour
 
         if (collision.tag == "PacMan")
         {
-            Destroy(gameObject);
-            collision.GetComponent<PlayerController>().score++;
-            gameManager.dots_remaining--;
-        }
+            if (PV == null)
+            {
+                Debug.LogError("Photon View is null");
+                return;
+            }
 
+            if (collision.GetComponent<PhotonView>().IsMine)
+            {
+                audioManager.PlayDotSound();
+            }
+        
+            PV.RPC("DestroyDot", RpcTarget.MasterClient); 
+
+            // Needs syncing
+            collision.GetComponent<PlayerController>().score++;
+        }
+    }
+
+    [PunRPC]
+    public void DestroyDot()
+    {
+        SyncPacDots.DecreaseDotsRemaining();
+        PhotonNetwork.Destroy(gameObject);
     }
 }

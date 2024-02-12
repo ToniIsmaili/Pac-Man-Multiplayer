@@ -1,16 +1,53 @@
+using Photon.Pun;
 using UnityEngine;
 
-public class PowerUpCollision : MonoBehaviour
+public class PowerUpCollision : MonoBehaviourPun
 {
     public PowerUp powerUp;
+    private PhotonView PV;
+    private AudioManager audioManager = null;
+
+    private void Start()
+    {
+        PV = GetComponent<PhotonView>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+    }
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.tag == "PacMan" && collider.GetComponent<PlayerController>().powerUp == null)
+        if (collider.tag == "PacMan" && collider.GetComponent<SyncPowerUp>().powerup == null)
         {
-            collider.GetComponent<PlayerController>().powerUp = powerUp;
+            int playerId = collider.GetComponent<PhotonView>().ViewID;
+
+            if (collider.GetComponent<PhotonView>().IsMine)
+            {
+                audioManager.PlayPowerUpSound();
+            }
+
+            PV.RPC("SetPowerUp", RpcTarget.All, playerId);
             collider.GetComponent <PlayerController>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
-            powerUp.onPickUp(gameObject);
+
+            if (PV.IsMine)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            } else
+            {
+                PV.RPC("DestroyPowerUp", RpcTarget.MasterClient);
+            }
         }
     }
+
+    [PunRPC]
+    public void DestroyPowerUp()
+    {
+        PhotonNetwork.Destroy(gameObject);
+    }
+
+    [PunRPC]
+    public void SetPowerUp(int playerId)
+    {
+        GameObject player = PhotonView.Find(playerId).gameObject;
+        player.GetComponent<SyncPowerUp>().Sync(powerUp.name);
+    }
+
 }
