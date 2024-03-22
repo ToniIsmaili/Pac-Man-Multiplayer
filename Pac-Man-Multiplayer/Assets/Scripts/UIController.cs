@@ -1,4 +1,3 @@
-using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,9 +13,7 @@ public class UIController : MonoBehaviour
     private void UpdateInventory()
     {
         if (player == null) player = GameObject.FindGameObjectWithTag("PacMan");
-
-        if (player == null) return;
-        if (player.GetComponent<SyncPowerUp>().powerup == null)
+        if (player.GetComponent<PlayerController>().powerUp == null)
             inventory.sprite = null;
         else inventory.sprite = player.GetComponent<PlayerController>().sprite;
     }
@@ -28,13 +25,14 @@ public class UIController : MonoBehaviour
 
     private void UpdateScore()
     {
-        score.text = SyncPacDots.GetDotsRemaining().ToString();
+        score.text = gameManager.GetComponent<GameManager>().dots_remaining.ToString();
     }
 
     void Update()
     {
-        // UpdateInventory();
+        UpdateInventory();
         UpdateSpeed();
+
         if (gameManager != null)
         {
             UpdateScore();

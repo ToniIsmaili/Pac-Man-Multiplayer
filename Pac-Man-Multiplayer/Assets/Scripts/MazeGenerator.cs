@@ -8,18 +8,19 @@ public class MazeGenerator : MonoBehaviour
     private const int UP = 1, RIGHT = 2, DOWN = 4, LEFT = 8;
     private bool hasWallMerged = false;
     public int numRows = 10, numCols = 5;
-    public Tilemap tilemap;
-    public TileBase tileBase;
+    public Tilemap tilemap, outerWall;
+    public TileBase tileBase, blankTile;
     private float[] probStopping = { 0f, 0f, 0.3f, 0.7f, 1f }, probBranchStopping = { 0f, 0.5f, 1f };
     private float probBranching = 0.7f, probWallMerging = 0.7f, probTunnel = 0.5f;
-    private int[,] map;
     public void GenerateMaze()
     {
         int[,] cells = new int[numRows, numCols];
         initializeCells(cells);
         setGhostSpawn(cells);
         generateMaze(cells);
-        map = cellToMap(cells);
+        int[,] map = cellToMap(cells);
+        renderMap(map);
+        InitializeFog(map, blankTile);
     }
 
     private static void initializeCells(int[,] cells)
@@ -167,12 +168,12 @@ public class MazeGenerator : MonoBehaviour
     private int[,] cellToMap(int[,] cells)
     {
         int numRows = cells.GetLength(0), numCols = cells.GetLength(1);
-        int mapRows = (numRows * 3) + 3, mapCols = numCols * 3 + 1;
+        int mapRows = (numRows * 3) + 5, mapCols = numCols * 3 + 2;
         int[,] map = new int[mapRows, mapCols];
         for (int i = 0; i < numRows; i++)
             for (int j = 0; j < numCols; j++)
             {
-                int bottomLefty = (i * 3) + 1, bottomLeftx = j * 3;
+                int bottomLefty = (i * 3) + 2, bottomLeftx = j * 3;
                 //Bottom and right edge are paths by default
                 map[bottomLefty, bottomLeftx] = map[bottomLefty, bottomLeftx + 1] = -1;
                 map[bottomLefty, bottomLeftx + 2] = map[bottomLefty + 1, bottomLeftx + 2] = map[bottomLefty + 2, bottomLeftx + 2] = -1;
@@ -244,16 +245,16 @@ public class MazeGenerator : MonoBehaviour
         //Top path, and top and bottom outer walls of map
         for (int i = 0; i < mapCols - 1; i++)
         {
-            map[mapRows - 2, i] = (map[mapRows - 3, i] == 1) ? 0 : -1;
-            map[mapRows - 1, i] = map[0, i] = 0;
+            map[mapRows - 3, i] = (map[mapRows - 4, i] == 1)? 0: -1;
+            map[mapRows - 2, i] = map[mapRows - 1, i] = map[0, i] = 0;
         }
-
+        
         //Outer wall corners of map
         map[0, mapCols - 1] = map[mapRows - 1, mapCols - 1] = 0;
 
         //Right and left outer wall of map
         for (int i = 1; i < mapRows - 1; i++)
-            map[i, mapCols - 1] = 0;
+            map [i, mapCols - 2] = map[i, mapCols - 1] = 0;
 
         int ghostSpawny = mapRows / 2 - 2;
         //Below ghost spawn
@@ -264,7 +265,7 @@ public class MazeGenerator : MonoBehaviour
         for (int i = ghostSpawny; i < ghostSpawny + 5; i++)
             map[i, 5] = -1;
 
-        //Inside host spawn
+        //Inside ghost spawn
         for (int i = ghostSpawny + 1; i < ghostSpawny + 4; i++)
             for (int j = 0; j < 4; j++)
                 map[i, j] = -1;
@@ -279,9 +280,9 @@ public class MazeGenerator : MonoBehaviour
         for (int index = 0; index < mapRows; index++)
         {
             int possibleTunnelRow = UnityEngine.Random.Range(2, mapRows - 5);
-            if (map[possibleTunnelRow, mapCols - 2] != 0)
+            if (map[possibleTunnelRow, mapCols - 3] != 0)
             {
-                map[possibleTunnelRow, mapCols - 1] = -1;
+                map[possibleTunnelRow, mapCols - 2] = -1;
                 break;
             }
         }
@@ -291,9 +292,9 @@ public class MazeGenerator : MonoBehaviour
             for (int index = 0; index < mapRows; index++)
             {
                 int possibleTunnelRow = UnityEngine.Random.Range(6, mapRows - 2);
-                if (map[possibleTunnelRow, mapCols - 2] != 0 && map[possibleTunnelRow, mapCols - 1] != -1)
+                if (map[possibleTunnelRow, mapCols - 3] != 0 && map[possibleTunnelRow, mapCols - 2] != -1)
                 {
-                    map[possibleTunnelRow, mapCols - 1] = -1;
+                    map[possibleTunnelRow, mapCols - 2] = -1;
                     break;
                 }
             }
@@ -301,12 +302,7 @@ public class MazeGenerator : MonoBehaviour
         return map;
     }
 
-    public int[,] getMap()
-    {
-        return map;
-    }
-
-    public void renderMap(int[,] map)
+    private void renderMap(int[,] map)
     {
         int numRows = map.GetLength(0);
         int numCols = map.GetLength(1);
@@ -323,11 +319,6 @@ public class MazeGenerator : MonoBehaviour
                     if (map[i, j] != -1) renderTile(mirrorV, tileBase);
                 }
             }
-    }
-
-    public void ClearTileMap()
-    {
-        tilemap.ClearAllTiles();
     }
 
     private void renderTile(Vector3Int pos, TileBase tile)
@@ -360,5 +351,21 @@ public class MazeGenerator : MonoBehaviour
         if (y < cells.GetLength(0) - 1 && cells[y + 1, x] == -1) adjacentOpenCells.Add(UP);
         if (x < cells.GetLength(1) - 1 && cells[y, x + 1] == -1) adjacentOpenCells.Add(RIGHT);
         return adjacentOpenCells;
+    }
+
+    void InitializeFog(int[,] map, TileBase tileBase)
+    {
+        int mapRows = map.GetLength(0), mapCols = map.GetLength(1) * 2 + 1;
+        int yOffset = mapRows / 2, xOffset = mapCols / 2 - 1;
+        for (int i = 0; i < mapRows; i++)
+        {
+            outerWall.SetTile(new Vector3Int(xOffset, i - yOffset, 0), tileBase);
+            outerWall.SetTile(new Vector3Int(-xOffset, i - yOffset, 0), tileBase);
+        }
+        for (int i = 1; i < mapCols - 1; i++)
+        {
+            outerWall.SetTile(new Vector3Int(i - xOffset, yOffset, 0), tileBase);
+            outerWall.SetTile(new Vector3Int(i - xOffset, -yOffset, 0), tileBase);
+        }
     }
 }
