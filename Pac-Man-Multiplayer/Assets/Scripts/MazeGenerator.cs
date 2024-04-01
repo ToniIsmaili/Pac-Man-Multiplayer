@@ -12,13 +12,14 @@ public class MazeGenerator : MonoBehaviour
     public TileBase tileBase, blankTile;
     private float[] probStopping = { 0f, 0f, 0.3f, 0.7f, 1f }, probBranchStopping = { 0f, 0.5f, 1f };
     private float probBranching = 0.7f, probWallMerging = 0.7f, probTunnel = 0.5f;
+    private int[,] map;
     public void GenerateMaze()
     {
         int[,] cells = new int[numRows, numCols];
         initializeCells(cells);
         setGhostSpawn(cells);
         generateMaze(cells);
-        int[,] map = cellToMap(cells);
+        map = cellToMap(cells);
         renderMap(map);
         InitializeFog(map, blankTile);
     }
@@ -302,7 +303,12 @@ public class MazeGenerator : MonoBehaviour
         return map;
     }
 
-    private void renderMap(int[,] map)
+    public int[,] getMap()
+    {
+        return map;
+    }
+
+    public void renderMap(int[,] map)
     {
         int numRows = map.GetLength(0);
         int numCols = map.GetLength(1);
@@ -319,6 +325,11 @@ public class MazeGenerator : MonoBehaviour
                     if (map[i, j] != -1) renderTile(mirrorV, tileBase);
                 }
             }
+    }
+
+    public void ClearTileMap()
+    {
+        tilemap.ClearAllTiles();
     }
 
     private void renderTile(Vector3Int pos, TileBase tile)
