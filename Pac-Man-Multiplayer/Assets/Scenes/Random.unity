@@ -1151,7 +1151,6 @@ MonoBehaviour:
   - {fileID: 6656401601783527134, guid: dbd0f87c789d74ba5a4799bbc250f071, type: 3}
   - {fileID: 4291193476294664858, guid: 5900258a9ff7c4d39ac140d40c65d422, type: 3}
   - {fileID: 4291193476294664858, guid: 4bca32a1ebbaec44a92164924eab5f16, type: 3}
-  FogOfWarCircle: {fileID: 2929446946929518120, guid: bf9c8cfd3ce598265b4617023f37f3d1, type: 3}
 --- !u!4 &1525840781
 Transform:
   m_ObjectHideFlags: 0

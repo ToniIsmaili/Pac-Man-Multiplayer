@@ -255,7 +255,7 @@ public class MazeGenerator : MonoBehaviour
 
         //Right and left outer wall of map
         for (int i = 1; i < mapRows - 1; i++)
-            map [i, mapCols - 2] = map[i, mapCols - 1] = 0;
+            map[i, mapCols - 2] = map[i, mapCols - 1] = 0;
 
         int ghostSpawny = mapRows / 2 - 2;
         //Below ghost spawn
@@ -272,10 +272,10 @@ public class MazeGenerator : MonoBehaviour
                 map[i, j] = -1;
 
         //Walls of ghost spawn
-        for (int i = ghostSpawny + 1; i < ghostSpawny + 4; i++)
+        for (int i = ghostSpawny + 1; i < ghostSpawny + 5; i++)
             map[i, 4] = 0;
-        for (int i = 0; i < 5; i++)
-            map[ghostSpawny, i] = map[ghostSpawny + 4, i] = 0;
+        // for (int i = 0; i < 5; i++)
+        //     map[ghostSpawny, i] = map[ghostSpawny + 5, i] = 0;
 
         //Make first tunnel
         for (int index = 0; index < mapRows; index++)
