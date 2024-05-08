@@ -44,7 +44,7 @@ Shader "Hidden/FogOfWarShader"
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-                return fixed4(0,0,0, 0.7f - col.r);
+                return fixed4(0,0,0, 0.7 - col.r);
             }
             ENDCG
         }

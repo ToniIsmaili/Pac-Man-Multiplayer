@@ -9,9 +9,11 @@ public class MapManager : MonoBehaviourPun
     private SyncMap sync_map;
 
     private static List<Vector3> freeTiles = new List<Vector3>();
-    public static List<Vector3> notWallTiles = new List<Vector3>();
 
     private GameObject player = null;
+    // Used to force dots, and spreading power ups out.
+    private bool force_dot = false;
+    public static List<Vector3> notWallTiles = new List<Vector3>();
     public bool reset = true;
 
     [Header("Power Ups")]
@@ -19,8 +21,6 @@ public class MapManager : MonoBehaviourPun
     public int powerUpChance = 5;
     [Tooltip("List of possible Power Ups that should be able to spawn in the level. (Insert prefabs of power ups)")]
     public GameObject[] powerUps;
-    // Used to force dots, and spreading power ups out.
-    private bool force_dot = false;
 
     void Start()
     {
