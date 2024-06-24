@@ -4,7 +4,7 @@ using UnityEngine;
 public class SyncMap : MonoBehaviourPun, IPunObservable
 {
     public const int numRows = 10, numCols = 5;
-    private const int mapRows = numRows * 3 + 3, mapCols = numCols * 3 + 1;
+    private const int mapRows = numRows * 3 + 5, mapCols = numCols * 3 + 2;
     public int[,] map = new int[mapRows, mapCols];
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

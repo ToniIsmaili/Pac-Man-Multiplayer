@@ -21,7 +21,6 @@ public class MazeGenerator : MonoBehaviour
         generateMaze(cells);
         map = cellToMap(cells);
         renderMap(map);
-        InitializeFog(map, blankTile);
     }
 
     private static void initializeCells(int[,] cells)
@@ -310,6 +309,7 @@ public class MazeGenerator : MonoBehaviour
 
     public void renderMap(int[,] map)
     {
+        InitializeFog(map, blankTile);
         int numRows = map.GetLength(0);
         int numCols = map.GetLength(1);
         int yOffset = (numRows - 1) / 2;
