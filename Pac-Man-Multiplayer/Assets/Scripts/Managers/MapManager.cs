@@ -161,13 +161,13 @@ public class MapManager : MonoBehaviourPun
     // shouldn't be saved in the freeTiles list
     private bool isTunnel(NetworkManager networkManager, int i, int j)
     {
-        if (i == mazeGenerator.tilemap.cellBounds.position.x)
+        if (i == mazeGenerator.tilemap.cellBounds.position.x + 1)
         {
             networkManager.Spawn("Tunnel", new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.Euler(0, 0, 0));
             return false;
         }
 
-        if (i == mazeGenerator.tilemap.cellBounds.size.x + mazeGenerator.tilemap.cellBounds.position.x - 1)
+        if (i == mazeGenerator.tilemap.cellBounds.size.x + mazeGenerator.tilemap.cellBounds.position.x - 2)
         {
             networkManager.Spawn("Tunnel", new Vector3(i + 0.5f, j + 0.5f, 0), Quaternion.Euler(0, 0, -180));
             return false;

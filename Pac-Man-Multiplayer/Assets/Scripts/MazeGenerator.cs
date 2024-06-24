@@ -244,14 +244,14 @@ public class MazeGenerator : MonoBehaviour
             }
 
         //Top path, and top and bottom outer walls of map
-        for (int i = 0; i < mapCols - 1; i++)
+        for (int i = 0; i < mapCols - 2; i++)
         {
             map[mapRows - 3, i] = (map[mapRows - 4, i] == 1)? 0: -1;
             map[mapRows - 2, i] = map[mapRows - 1, i] = map[0, i] = 0;
         }
         
         //Outer wall corners of map
-        map[0, mapCols - 1] = map[mapRows - 1, mapCols - 1] = 0;
+        // map[0, mapCols - 1] = map[mapRows - 1, mapCols - 1] = 0;
 
         //Right and left outer wall of map
         for (int i = 1; i < mapRows - 1; i++)
@@ -373,7 +373,7 @@ public class MazeGenerator : MonoBehaviour
             outerWall.SetTile(new Vector3Int(xOffset, i - yOffset, 0), tileBase);
             outerWall.SetTile(new Vector3Int(-xOffset, i - yOffset, 0), tileBase);
         }
-        for (int i = 1; i < mapCols - 1; i++)
+        for (int i = 1; i < mapCols - 2; i++)
         {
             outerWall.SetTile(new Vector3Int(i - xOffset, yOffset, 0), tileBase);
             outerWall.SetTile(new Vector3Int(i - xOffset, -yOffset, 0), tileBase);
