@@ -10,6 +10,7 @@ public class UIController : MonoBehaviour
     public Image inventory;
     public TMP_Text speed;
     public TMP_Text score;
+    private int startingDots = 0;
 
     private void UpdateInventory()
     {
@@ -28,17 +29,16 @@ public class UIController : MonoBehaviour
 
     private void UpdateScore()
     {
-        score.text = SyncPacDots.GetDotsRemaining().ToString();
+        score.text = (startingDots - SyncPacDots.GetDotsRemaining()).ToString();
     }
 
     void Update()
     {
         // UpdateInventory();
         UpdateSpeed();
+        if (startingDots == 0)
+            startingDots = SyncPacDots.GetDotsRemaining();
         if (gameManager != null)
-        {
             UpdateScore();
-        }
-
     }
 }

@@ -10,6 +10,7 @@ TagManager:
   - PowerUp
   - Barrier
   - Tunnel
+  - Enemy
   layers:
   - Default
   - TransparentFX
