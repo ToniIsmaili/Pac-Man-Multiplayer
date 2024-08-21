@@ -13,7 +13,7 @@ public class MazeGenerator : MonoBehaviour
     private float[] probStopping = { 0f, 0f, 0.3f, 0.7f, 1f }, probBranchStopping = { 0f, 0.5f, 1f };
     private float probBranching = 0.7f, probWallMerging = 0.7f, probTunnel = 0.5f;
     private int[,] map;
-    public void GenerateMaze()
+    public int[,] GenerateMaze()
     {
         int[,] cells = new int[numRows, numCols];
         initializeCells(cells);
@@ -21,6 +21,7 @@ public class MazeGenerator : MonoBehaviour
         generateMaze(cells);
         map = cellToMap(cells);
         renderMap(map);
+        return map;
     }
 
     private static void initializeCells(int[,] cells)

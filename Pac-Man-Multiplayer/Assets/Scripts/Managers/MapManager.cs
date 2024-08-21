@@ -5,15 +5,17 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviourPun
 {
+    [HideInInspector]
+    public int[,] map;
     private static MazeGenerator mazeGenerator;
     private SyncMap sync_map;
 
-    private static List<Vector3> freeTiles = new List<Vector3>();
+    private static List<Vector3> freeTiles = new();
 
     private GameObject player = null;
     // Used to force dots, and spreading power ups out.
     private bool force_dot = false;
-    public static List<Vector3> notWallTiles = new List<Vector3>();
+    public static List<Vector3> notWallTiles = new();
     public bool reset = true;
 
     [Header("Power Ups")]
@@ -46,7 +48,7 @@ public class MapManager : MonoBehaviourPun
         mazeGenerator.ClearTileMap();
 
         // Generates a 2D array of the map ( -1 = tile & 0 = empty )
-        mazeGenerator.GenerateMaze();
+        map = mazeGenerator.GenerateMaze();
 
         // Synchronizes the map with all the players and instantiates it locally
         sync_map.map = mazeGenerator.getMap();

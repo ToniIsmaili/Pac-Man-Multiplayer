@@ -6,6 +6,8 @@ public class OrangeController : MonoBehaviour
 {
     public float Sleep = 300f;
     public float speed = 6f;
+    [HideInInspector]
+    public int[,] map;
     private Rigidbody2D rb;
 
     void Start()

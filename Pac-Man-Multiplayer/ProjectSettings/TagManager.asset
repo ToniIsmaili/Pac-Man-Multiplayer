@@ -11,6 +11,7 @@ TagManager:
   - Barrier
   - Tunnel
   - Enemy
+  - UserInterface
   layers:
   - Default
   - TransparentFX
@@ -53,6 +54,9 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 3809153127
+    locked: 0
+  - name: Ghost
+    uniqueID: 3809235331
     locked: 0
   - name: Wall
     uniqueID: 4267049033

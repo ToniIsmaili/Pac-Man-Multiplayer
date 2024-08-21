@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3731316134081227728}
   m_Layer: 0
   m_Name: GhostRed
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -73,8 +73,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -485731965
+  m_SortingLayer: 3
   m_SortingOrder: 1
   m_Sprite: {fileID: 1790715480, guid: f7893e3e4b863909abb6d0a67c2fb450, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!114 &-429866004281802636
 MonoBehaviour:
@@ -171,5 +171,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.95, y: 0.95}
   m_EdgeRadius: 0
