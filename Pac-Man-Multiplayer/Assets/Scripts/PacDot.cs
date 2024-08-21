@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PacDot : MonoBehaviourPun
 {
+    private UIController uIController;
     private AudioManager audioManager = null;
     private PhotonView PV;
 
@@ -10,6 +11,7 @@ public class PacDot : MonoBehaviourPun
     {
         PV = GetComponent<PhotonView>();
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        uIController = GameObject.FindWithTag("UserInterface").GetComponent<UIController>();
         SyncPacDots.IncreaseDotsRemaining();
     }
 
@@ -18,7 +20,7 @@ public class PacDot : MonoBehaviourPun
         if (collision == null)
             return;
 
-        if (collision.tag == "PacMan")
+        if (collision.CompareTag("PacMan"))
         {
             if (PV == null)
             {
@@ -33,8 +35,7 @@ public class PacDot : MonoBehaviourPun
         
             PV.RPC("DestroyDot", RpcTarget.MasterClient); 
 
-            // Needs syncing
-            collision.GetComponent<PlayerController>().score++;
+            if (uIController != null) uIController.UpdateScore();
         }
     }
 

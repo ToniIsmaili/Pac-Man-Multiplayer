@@ -45,7 +45,7 @@ public class MapManager : MonoBehaviourPun
         networkManager.DestroyAllTags("PowerUp");
         mazeGenerator.ClearTileMap();
 
-        // Generates a 2D array of the map ( -1 = tile & 0 = emtpy )
+        // Generates a 2D array of the map ( -1 = tile & 0 = empty )
         mazeGenerator.GenerateMaze();
 
         // Synchronizes the map with all the players and instantiates it locally
@@ -58,6 +58,7 @@ public class MapManager : MonoBehaviourPun
 
         HandlePlayer(networkManager);
 
+        networkManager.DestroyAllTags("PacDot");
         PlaceDot(networkManager);
         PlacePowerUp(networkManager);
     }

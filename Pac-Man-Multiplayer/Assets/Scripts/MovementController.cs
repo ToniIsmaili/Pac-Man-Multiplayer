@@ -19,7 +19,7 @@ public class MovementController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = speed * direction * Time.deltaTime;
+        rb.velocity = speed * Time.deltaTime * direction;
     }
 
     // Checks if the way that the player wants to go is free, and when it is it starts walking there
