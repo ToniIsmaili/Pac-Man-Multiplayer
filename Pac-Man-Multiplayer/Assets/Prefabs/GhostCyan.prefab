@@ -172,4 +172,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Sleep: 20
-  speed: 500
+  speed: 450
+  sprites:
+  - {fileID: -1425217962, guid: 513b7d8099e6ff12d94fc9493d6be72e, type: 3}
+  - {fileID: -1388650955, guid: 513b7d8099e6ff12d94fc9493d6be72e, type: 3}
+  - {fileID: -1585399515, guid: 513b7d8099e6ff12d94fc9493d6be72e, type: 3}
+  - {fileID: -545442081, guid: 513b7d8099e6ff12d94fc9493d6be72e, type: 3}

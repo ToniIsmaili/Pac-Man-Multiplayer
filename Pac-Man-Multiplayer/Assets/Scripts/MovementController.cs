@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class MovementController : MonoBehaviour
 {
-    private Vector2 direction = Vector2.zero;
+    [HideInInspector]
+    public Vector2 direction = Vector2.zero;
     private Vector2 player_input = Vector2.zero;
     private Rigidbody2D rb;
     public float speed = 5f;

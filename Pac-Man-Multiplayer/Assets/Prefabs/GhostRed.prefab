@@ -101,6 +101,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Sleep: 0
   speed: 500
+  sprites:
+  - {fileID: -1555033889, guid: f7893e3e4b863909abb6d0a67c2fb450, type: 3}
+  - {fileID: -865650445, guid: f7893e3e4b863909abb6d0a67c2fb450, type: 3}
+  - {fileID: 1790715480, guid: f7893e3e4b863909abb6d0a67c2fb450, type: 3}
+  - {fileID: -1856191956, guid: f7893e3e4b863909abb6d0a67c2fb450, type: 3}
 --- !u!50 &7837477159373570184
 Rigidbody2D:
   serializedVersion: 4

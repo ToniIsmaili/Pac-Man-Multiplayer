@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8799765917977028066
 Transform:
   m_ObjectHideFlags: 0
@@ -157,7 +157,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.95, y: 0.95}
   m_EdgeRadius: 0
 --- !u!114 &-6115072548117303682
 MonoBehaviour:
@@ -172,4 +172,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Sleep: 10
-  speed: 500
+  speed: 450
+  sprites:
+  - {fileID: 1586361066, guid: c121549985f297ab9ad3d8391c5b7825, type: 3}
+  - {fileID: 1568995858, guid: c121549985f297ab9ad3d8391c5b7825, type: 3}
+  - {fileID: 2097370229, guid: c121549985f297ab9ad3d8391c5b7825, type: 3}
+  - {fileID: -1258655961, guid: c121549985f297ab9ad3d8391c5b7825, type: 3}
