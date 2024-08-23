@@ -23,7 +23,7 @@ public class OrangeController : MonoBehaviour
 
     private void Update()
     {
-        if (mapManager.map == null) return;
+        if (mapManager.map == null || GameObject.FindWithTag("PacMan") == null) return;
         if (Sleep > 0)
         {
             Sleep -= Time.deltaTime;
@@ -82,13 +82,20 @@ public class OrangeController : MonoBehaviour
 
         float distanceToPacMan = Vector2.Distance(clydePosition, pacManPosition);
 
-        if (distanceToPacMan > 8)
+        if (scattering)
+        {
+            // Target the fixed scatter mode position (top-right corner of the maze)
+            return new Vector2(16.5f, 17.5f);
+        }
+        else if (distanceToPacMan > 8)
         {
             // Target Pac-Man's current position
             return pacManPosition;
         }
         else
         {
+            scattering = true;
+            timer = 3f;
             // Target the fixed scatter mode position (top-right corner of the maze)
             return new Vector2(16.5f, 17.5f);
         }
@@ -104,15 +111,6 @@ public class OrangeController : MonoBehaviour
         foreach (Direction dir in directions)
         {
             if (CanMove(dir.ToVector2(), "Wall") && CanMove(dir.ToVector2(), "Barrier") && CanMove(dir.ToVector2(), "Tunnel") && CanMove(dir.ToVector2(), "Enemy"))
-            {
-                Vector2 next = current + dir.ToVector2();
-                float distance = Vector2.Distance(next, target);
-                if (distance < minDistance && direction != dir.TurnBack())
-                {
-                    minDistance = distance;
-                    bestDirection = dir;
-                }
-            }
             {
                 Vector2 next = current + dir.ToVector2();
                 float distance = Vector2.Distance(next, target);
@@ -149,7 +147,7 @@ public class OrangeController : MonoBehaviour
             }
             else
             {
-                collision.gameObject.SetActive(false);
+                Destroy(collision.gameObject);
             }
         }
         else if (collision.gameObject.tag == "Enemy")

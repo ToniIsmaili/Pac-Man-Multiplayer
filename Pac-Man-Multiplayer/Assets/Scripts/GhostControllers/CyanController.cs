@@ -20,12 +20,12 @@ public class CyanController : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        RedGhost = GameObject.Find("RedGhost");
+        RedGhost = GameObject.Find("GhostRed(Clone)");
     }
 
     private void Update()
     {
-        if (mapManager.map == null) return;
+        if (mapManager.map == null || GameObject.FindWithTag("PacMan") == null) return;
         if (Sleep > 0)
         {
             Sleep -= Time.deltaTime;
@@ -35,7 +35,7 @@ public class CyanController : MonoBehaviour
             leaveSpawnArea();
         else if (timer <= 0)
         {
-            timer = scattering? 180f : 10f;
+            timer = scattering ? 180f : 10f;
             scattering = !scattering;
             direction = direction.TurnBack();
         }
@@ -113,15 +113,6 @@ public class CyanController : MonoBehaviour
                     bestDirection = dir;
                 }
             }
-            {
-                Vector2 next = current + dir.ToVector2();
-                float distance = Vector2.Distance(next, target);
-                if (distance < minDistance && direction != dir.TurnBack())
-                {
-                    minDistance = distance;
-                    bestDirection = dir;
-                }
-            }
         }
         return bestDirection;
     }
@@ -149,7 +140,7 @@ public class CyanController : MonoBehaviour
             }
             else
             {
-                collision.gameObject.SetActive(false);
+                Destroy(collision.gameObject);
             }
         }
         else if (collision.gameObject.tag == "Enemy")

@@ -1,4 +1,3 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class RedController : MonoBehaviour
@@ -22,7 +21,7 @@ public class RedController : MonoBehaviour
 
     private void Update()
     {
-        if (mapManager.map == null) return;
+        if (mapManager.map == null || GameObject.FindWithTag("PacMan") == null) return;
         if (Sleep > 0 || GameObject.FindWithTag("PacMan") == null)
         {
             Sleep -= Time.deltaTime;
@@ -116,7 +115,6 @@ public class RedController : MonoBehaviour
             else
             {
                 Destroy(collision.gameObject);
-                Sleep = 0.5f;
             }
         }
         else if (collision.gameObject.tag == "Enemy")

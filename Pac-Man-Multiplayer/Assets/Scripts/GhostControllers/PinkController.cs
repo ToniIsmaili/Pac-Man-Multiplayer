@@ -23,7 +23,7 @@ public class PinkController : MonoBehaviour
 
     private void Update()
     {
-        if (mapManager.map == null) return;
+        if (mapManager.map == null || GameObject.FindWithTag("PacMan") == null) return;
         if (Sleep > 0)
         {
             Sleep -= Time.deltaTime;
@@ -92,15 +92,6 @@ public class PinkController : MonoBehaviour
                     bestDirection = dir;
                 }
             }
-            {
-                Vector2 next = current + dir.ToVector2();
-                float distance = Vector2.Distance(next, target);
-                if (distance < minDistance && direction != dir.TurnBack())
-                {
-                    minDistance = distance;
-                    bestDirection = dir;
-                }
-            }
         }
         return bestDirection;
     }
@@ -128,7 +119,7 @@ public class PinkController : MonoBehaviour
             }
             else
             {
-                collision.gameObject.SetActive(false);
+                Destroy(collision.gameObject);
             }
         }
         else if (collision.gameObject.tag == "Enemy")

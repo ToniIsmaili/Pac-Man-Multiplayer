@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6889590417266829046
 Transform:
   m_ObjectHideFlags: 0
@@ -173,3 +173,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Sleep: 30
   speed: 450
+  sprites:
+  - {fileID: 216685967, guid: 29ef4875d59d5dd86a8ea9ef8c11549e, type: 3}
+  - {fileID: 354548600, guid: 29ef4875d59d5dd86a8ea9ef8c11549e, type: 3}
+  - {fileID: 1332758269, guid: 29ef4875d59d5dd86a8ea9ef8c11549e, type: 3}
+  - {fileID: -1652170567, guid: 29ef4875d59d5dd86a8ea9ef8c11549e, type: 3}
